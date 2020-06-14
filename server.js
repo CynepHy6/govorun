@@ -25,6 +25,12 @@ const idLink = 'https://id.skyeng.ru/admin/users/';
 const customerLink = 'https://fly.customer.io/env/40281/people/';
 
 slackEvent.on('message', async payload => {
+  if (payload.thread_ts) {
+    return;
+  }
+  await buildStudentLinks(payload);
+});
+slackEvent.on('app_mention', async payload => {
   await buildStudentLinks(payload);
 });
 
@@ -34,12 +40,12 @@ slackEvent.on('message', async payload => {
 })();
 
 async function buildStudentLinks(payload) {
-  if (payload.thread_ts || !payload.text) {
+  if (!payload.text) {
     return;
   }
   console.log(payload);
 
-  const ids = (payload.text.match(/(У|[Лл][Кк])\s*\d{5,}/g) || []).map(sid => sid.replace(/(У|[Лл][Кк])\s*/, ''));
+  const ids = (payload.text.match(/([Уу]|[Лл][Кк])\s*\d{5,}/g) || []).map(sid => sid.replace(/([Уу]|[Лл][Кк])\s*/, ''));
   if (0 === ids.length) {
     return;
   }
@@ -47,7 +53,7 @@ async function buildStudentLinks(payload) {
 
   await slackBotClient.chat.postMessage({
     channel: payload.channel,
-    thread_ts: payload.ts,
+    thread_ts: payload.thread_ts || payload.ts,
     text: links,
     unfurl_links: true,
   });
@@ -55,8 +61,8 @@ async function buildStudentLinks(payload) {
 
 async function buildLinks(ids) {
   const promises = ids.map(async id => {
-    return `${id}: <${kglLink}${id}|KGL> | <${idLink}${id}|ID> | <${customerLink}${id}|customer> ${await buildSearch(
-        id)}`;
+    return `${id}: <${kglLink}${id}|KGL> | <${idLink}${id}|ID> | <${customerLink}${id}|customer> `
+        + `${await buildSearch(id)}`;
   });
   return (await Promise.all(promises)).join('\n');
 }
@@ -64,7 +70,7 @@ async function buildLinks(ids) {
 async function buildSearch(id) {
   const result = await slackUserClient.search.messages({
     query: `in:#kids-groups-helpdesk ${id}`,
-    count: 3,
+    count: 50,
   });
 
   if (!result.ok) {
@@ -74,9 +80,15 @@ async function buildSearch(id) {
   if (0 === matches.length) {
     return '';
   }
-  const body = matches.map(m => `<${m.permalink}|${cleanText(m.text)}>`);
 
-  return `| Предыдущие обращения (всего ${result.messages.total}): ` + body.join(', ');
+  const links = matches.filter(m => m.username === 'kids groups helpdesk')
+      .map(m => {
+        return `<${m.permalink}|${cleanText(m.text)}>`;
+      });
+  if (0 === links.length) {
+    return '';
+  }
+  return `| ранее: ` + links.join(', ');
 }
 
 function cleanText(text) {
