@@ -45,7 +45,7 @@ async function buildStudentLinks(payload) {
   }
   console.log(payload);
 
-  const ids = (payload.text.match(/([Уу]|[Лл][Кк])\s*\d{5,}/g) || []).map(sid => sid.replace(/([Уу]|[Лл][Кк])\s*/, ''));
+  const ids = (payload.text.match(/([у]|[л][к])\s*\d{5,}/gi) || []).map(sid => sid.replace(/([у]|[л][к])\s*/gi, ''));
   if (0 === ids.length) {
     return;
   }
@@ -68,9 +68,11 @@ async function buildLinks(ids) {
 }
 
 async function buildSearch(id) {
+  const query = `${id} in:#kids-groups-helpdesk -ранее -предыдущие -customer -%3C%40UQ0EUGQVA%3E`;
   const result = await slackUserClient.search.messages({
-    query: `in:#kids-groups-helpdesk ${id}`,
-    count: 50,
+    query: query,
+    sort: 'timestamp',
+    count: 60,
   });
 
   if (!result.ok) {
@@ -80,11 +82,8 @@ async function buildSearch(id) {
   if (0 === matches.length) {
     return '';
   }
-
   const links = matches.filter(m => m.username === 'kids groups helpdesk')
-      .map(m => {
-        return `<${m.permalink}|${cleanText(m.text)}>`;
-      });
+      .map(m => `<${m.permalink}|${cleanText(m.text)}>`);
   if (0 === links.length) {
     return '';
   }
