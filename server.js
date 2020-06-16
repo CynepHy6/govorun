@@ -39,19 +39,25 @@ slackEvent.on('app_mention', async payload => {
   console.log(`Listening on ${server.address().port}`);
 })();
 
+const studentPattern = '\\s+([у]|[л][к])\\s*';
+let threadTs = '';
+
 function getStudentRequest(payload) {
-  return payload.text.match(/(\s[у]|[л][к])\s*\d{5,}/gi) || [];
+  const re = new RegExp(studentPattern + '\\d{5,}', 'gi');
+  return payload.text.match(re) || [];
 }
 
 async function buildResponse(payload) {
   if (!payload.text) {
     return;
   }
+  threadTs = payload.thread_ts;
   console.log(payload);
   let text = '';
   const sids = getStudentRequest(payload);
   if (sids) {
-    const ids = sids.map(sid => sid.replace(/\s([у]|[л][к])\s*/gi, ''));
+    const re = new RegExp(studentPattern, 'gi');
+    const ids = sids.map(sid => sid.replace(re, ''));
     text = await buildForStudent(ids);
   }
 
@@ -69,9 +75,9 @@ async function buildResponse(payload) {
 async function buildForStudent(ids) {
   const promises = ids.map(async id => {
     return `${id}: <${kglLink}${id}|KGL> | <${idLink}${id}|ID> | <${customerLink}${id}|customer> `
-        + `${await buildSearch(id)}`;
+        + `${await buildSearch(id)}\n`;
   });
-  return (await Promise.all(promises)).join('\n') + '\n';
+  return (await Promise.all(promises)).join('');
 }
 
 async function buildSearch(id) {
@@ -86,10 +92,13 @@ async function buildSearch(id) {
     return '';
   }
   const matches = result.messages.matches || [];
+  console.log('MATCHES ', matches);
   if (0 === matches.length) {
     return '';
   }
+  console.log(threadTs)
   const links = matches.filter(m => m.username === 'kids groups helpdesk')
+      .filter(m => m.ts !== threadTs)
       .map(m => `<${m.permalink}|${cleanText(m.text)}>`);
   if (0 === links.length) {
     return '';
