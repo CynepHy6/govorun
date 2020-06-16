@@ -23,6 +23,7 @@ const slackUserClient = new WebClient(userToken);
 const kglLink = 'https://grouplessons-api.skyeng.ru/admin/student/view/';
 const idLink = 'https://id.skyeng.ru/admin/users/';
 const customerLink = 'https://fly.customer.io/env/40281/people/';
+const crm1GroupLink = 'https://crm.skyeng.ru/admin/group/edit?id=';
 
 slackEvent.on('message', async payload => {
   if (payload.thread_ts) {
@@ -41,6 +42,7 @@ slackEvent.on('app_mention', async payload => {
 
 const studentPattern = '\\s+([у]|[л][к])\\s*';
 const teacherPattern = '\\s+([п])\\s*';
+const groupPattern = '\\s+г(руппа|р)?\\.?\\s*';
 let threadTs = '';
 
 async function buildResponse(payload) {
@@ -50,18 +52,11 @@ async function buildResponse(payload) {
   threadTs = payload.thread_ts;
   console.log(payload);
   let text = '';
-  const sids = getStudentRequest(payload);
-  if (sids) {
-    const re = new RegExp(studentPattern, 'gi');
-    const ids = sids.map(sid => sid.replace(re, ''));
-    text += await buildForStudent(ids);
-  }
-  const tids = getTeacherRequest(payload);
-  if (tids) {
-    const re = new RegExp(teacherPattern, 'gi');
-    const ids = tids.map(tid => tid.replace(re, ''));
-    text += await buildForTeacher(ids);
-  }
+
+  text += await buildForStudent(payload);
+  text += await buildForTeacher(payload);
+  text += await buildForGroup(payload);
+
   if (!text) {
     return;
   }
@@ -83,7 +78,18 @@ function getTeacherRequest(payload) {
   return payload.text.match(re) || [];
 }
 
-async function buildForStudent(ids) {
+function getGroupRequest(payload) {
+  const re = new RegExp(groupPattern + '\\d{3,5}', 'gi');
+  return payload.text.match(re) || [];
+}
+
+async function buildForStudent(payload) {
+  const sids = getStudentRequest(payload);
+  if (!sids) {
+    return;
+  }
+  const re = new RegExp(studentPattern, 'gi');
+  const ids = sids.map(sid => sid.replace(re, ''));
   const promises = ids.map(async id => {
     return `${id}: <${kglLink}${id}|KGL> | <${idLink}${id}|ID> | <${customerLink}${id}|customer> `
         + `${await buildSearch(id)}\n`;
@@ -91,8 +97,24 @@ async function buildForStudent(ids) {
   return (await Promise.all(promises)).join('');
 }
 
-async function buildForTeacher(ids) {
+async function buildForTeacher(payload) {
+  const tids = getTeacherRequest(payload);
+  if (!tids) {
+    return;
+  }
+  const re = new RegExp(teacherPattern, 'gi');
+  const ids = tids.map(tid => tid.replace(re, ''));
   return ids.map(id => `П ${id}:  <${idLink}${id}|ID> \n`).join('');
+}
+
+async function buildForGroup(payload) {
+  let ids = getGroupRequest(payload);
+  if (!ids) {
+    return;
+  }
+  const re = new RegExp(groupPattern, 'gi');
+  ids = ids.map(id => id.replace(re, ''));
+  return ids.map(id => `<${crm1GroupLink}${id}|группа ${id}> \n`).join('');
 }
 
 async function buildSearch(id) {
