@@ -40,12 +40,8 @@ slackEvent.on('app_mention', async payload => {
 })();
 
 const studentPattern = '\\s+([у]|[л][к])\\s*';
+const teacherPattern = '\\s+([п])\\s*';
 let threadTs = '';
-
-function getStudentRequest(payload) {
-  const re = new RegExp(studentPattern + '\\d{5,}', 'gi');
-  return payload.text.match(re) || [];
-}
 
 async function buildResponse(payload) {
   if (!payload.text) {
@@ -58,9 +54,14 @@ async function buildResponse(payload) {
   if (sids) {
     const re = new RegExp(studentPattern, 'gi');
     const ids = sids.map(sid => sid.replace(re, ''));
-    text = await buildForStudent(ids);
+    text += await buildForStudent(ids);
   }
-
+  const tids = getTeacherRequest(payload);
+  if (tids) {
+    const re = new RegExp(teacherPattern, 'gi');
+    const ids = tids.map(tid => tid.replace(re, ''));
+    text += await buildForTeacher(ids);
+  }
   if (!text) {
     return;
   }
@@ -72,12 +73,26 @@ async function buildResponse(payload) {
   });
 }
 
+function getStudentRequest(payload) {
+  const re = new RegExp(studentPattern + '\\d{5,}', 'gi');
+  return payload.text.match(re) || [];
+}
+
+function getTeacherRequest(payload) {
+  const re = new RegExp(teacherPattern + '\\d{5,}', 'gi');
+  return payload.text.match(re) || [];
+}
+
 async function buildForStudent(ids) {
   const promises = ids.map(async id => {
     return `${id}: <${kglLink}${id}|KGL> | <${idLink}${id}|ID> | <${customerLink}${id}|customer> `
         + `${await buildSearch(id)}\n`;
   });
   return (await Promise.all(promises)).join('');
+}
+
+async function buildForTeacher(ids) {
+  return ids.map(id => `П ${id}:  <${idLink}${id}|ID> \n`).join('');
 }
 
 async function buildSearch(id) {
