@@ -28,10 +28,10 @@ slackEvent.on('message', async payload => {
   if (payload.thread_ts) {
     return;
   }
-  await buildStudentLinks(payload);
+  await buildResponse(payload);
 });
 slackEvent.on('app_mention', async payload => {
-  await buildStudentLinks(payload);
+  await buildResponse(payload);
 });
 
 (async () => {
@@ -39,32 +39,39 @@ slackEvent.on('app_mention', async payload => {
   console.log(`Listening on ${server.address().port}`);
 })();
 
-async function buildStudentLinks(payload) {
+function getStudentRequest(payload) {
+  return payload.text.match(/(\s[у]|[л][к])\s*\d{5,}/gi) || [];
+}
+
+async function buildResponse(payload) {
   if (!payload.text) {
     return;
   }
   console.log(payload);
+  let text = '';
+  const sids = getStudentRequest(payload);
+  if (sids) {
+    const ids = sids.map(sid => sid.replace(/\s([у]|[л][к])\s*/gi, ''));
+    text = await buildForStudent(ids);
+  }
 
-  const ids = (payload.text.match(/([у]|[л][к])\s*\d{5,}/gi) || []).map(sid => sid.replace(/([у]|[л][к])\s*/gi, ''));
-  if (0 === ids.length) {
+  if (!text) {
     return;
   }
-  const links = await buildLinks(ids);
-
   await slackBotClient.chat.postMessage({
     channel: payload.channel,
     thread_ts: payload.thread_ts || payload.ts,
-    text: links,
+    text: text,
     unfurl_links: true,
   });
 }
 
-async function buildLinks(ids) {
+async function buildForStudent(ids) {
   const promises = ids.map(async id => {
     return `${id}: <${kglLink}${id}|KGL> | <${idLink}${id}|ID> | <${customerLink}${id}|customer> `
         + `${await buildSearch(id)}`;
   });
-  return (await Promise.all(promises)).join('\n');
+  return (await Promise.all(promises)).join('\n') + '\n';
 }
 
 async function buildSearch(id) {
