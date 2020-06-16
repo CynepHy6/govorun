@@ -92,11 +92,11 @@ async function buildSearch(id) {
     return '';
   }
   const matches = result.messages.matches || [];
-  console.log('MATCHES ', matches);
+
   if (0 === matches.length) {
     return '';
   }
-  console.log(threadTs)
+
   const links = matches.filter(m => m.username === 'kids groups helpdesk')
       .filter(m => m.ts !== threadTs)
       .map(m => `<${m.permalink}|${cleanText(m.text)}>`);
