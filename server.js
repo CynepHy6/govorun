@@ -42,7 +42,7 @@ slackEvent.on('app_mention', async payload => {
 
 const studentPattern = '\\s+([у]|[л][к])\\s*';
 const teacherPattern = '\\s+([п])\\s*';
-const groupPattern = '\\s+г(руппа|р)?\\.?\\s*';
+const groupPattern = '\\s+г(рупп.?|р)?\\.?\\s*';
 let threadTs = '';
 
 async function buildResponse(payload) {
