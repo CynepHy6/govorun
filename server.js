@@ -138,11 +138,26 @@ async function buildSearch(id) {
 
   const links = matches.filter(m => m.username === 'kids groups helpdesk')
       .filter(m => m.ts !== threadTs)
-      .map(m => `<${m.permalink}|${cleanText(m.text)}>`);
+      .filter(m => !m.previous)
+      .map(m => `<${m.permalink}|${formatTs(m.ts)}>`);
   if (0 === links.length) {
     return '';
   }
   return `| ранее: ` + links.join(', ');
+}
+
+const formatter = new Intl.DateTimeFormat('ru', {
+  timeZone: 'Europe/Moscow',
+  hour12: false,
+  weekday: 'short',
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+});
+
+function formatTs(ts) {
+  return formatter.format(new Date(+ts * 1000));
 }
 
 function cleanText(text) {
