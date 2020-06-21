@@ -32,6 +32,9 @@ slackEvent.on('message', async payload => {
   await buildResponse(payload);
 });
 slackEvent.on('app_mention', async payload => {
+  if (!payload.thread_ts) {
+    return;
+  }
   await buildResponse(payload);
 });
 
@@ -40,7 +43,7 @@ slackEvent.on('app_mention', async payload => {
   console.log(`Listening on ${server.address().port}`);
 })();
 
-const studentPattern = '\\s+([у]|[л][к])\\s*';
+const studentPattern = '\\s+(у|лк)\\s*\\-?\\s*';
 const teacherPattern = '\\s+([п])\\s*';
 const groupPattern = '\\s+г(рупп.?|р)?\\.?\\s*';
 let threadTs = '';
@@ -52,7 +55,6 @@ async function buildResponse(payload) {
   threadTs = payload.thread_ts;
   console.log(payload);
   let text = '';
-
   text += await buildForStudent(payload);
   text += await buildForTeacher(payload);
   text += await buildForGroup(payload);
