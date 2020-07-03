@@ -89,8 +89,9 @@ function getCommonRequest(payload) {
 }
 
 function getGroupRequest(payload) {
-  const re = new RegExp(groupPattern + '\\d{3,5}', 'gi');
-  return payload.text.match(re) || [];
+  const re = new RegExp(groupPattern + '\\d{4}', 'gi');
+  const re2 = new RegExp('\\b\\d{4}\\b', 'gi');
+  return payload.text.match(re) || payload.text.match(re2) || [];
 }
 
 async function buildForStudent(payload) {
