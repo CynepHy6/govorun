@@ -74,12 +74,12 @@ async function buildResponse(payload) {
 }
 
 function getStudentRequest(payload) {
-  const re = new RegExp(studentPattern + '\\d{5,}', 'gi');
+  const re = new RegExp(studentPattern + '\\d{5,9}', 'gi');
   return payload.text.match(re) || [];
 }
 
 function getTeacherRequest(payload) {
-  const re = new RegExp(teacherPattern + '\\d{5,}', 'gi');
+  const re = new RegExp(teacherPattern + '\\d{5,9}', 'gi');
   return payload.text.match(re) || [];
 }
 
