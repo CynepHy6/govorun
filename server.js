@@ -84,7 +84,7 @@ function getTeacherRequest(payload) {
 }
 
 function getCommonRequest(payload) {
-  const re = new RegExp('\\b\\d{6,}\\b', 'gi');
+  const re = new RegExp('\\b\\d{5,9}\\b', 'gi');
   return payload.text.match(re) || [];
 }
 
