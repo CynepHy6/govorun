@@ -43,8 +43,8 @@ slackEvent.on('app_mention', async payload => {
   console.log(`Listening on ${server.address().port}`);
 })();
 
-const STUDENT_PATTERN = '\\s*(у|лк)\\s*\\-?\\.?\\s*';
-const TEACHER_PATTERN = '\\s*([п])\\s*';
+const STUDENT_PATTERN = '\\s*(у|лк|student_id=)\\s*\\-?\\.?\\s*';
+const TEACHER_PATTERN = '\\s*(п|teacher_id=)\\s*';
 const GROUP_PATTERN = '\\s*г(рупп.?|р)?\\.?\\s*';
 let threadTs = '';
 
@@ -100,9 +100,10 @@ async function buildForStudent(payload) {
     return;
   }
   const re = new RegExp(STUDENT_PATTERN, 'gi');
-  const ids = sids.map(sid => sid.replace(re, ''));
-  return await buildForStudentIds(ids)
+  const ids = filterRepeated(sids.map(sid => sid.replace(re, '')));
+  return await buildForStudentIds(ids);
 }
+
 async function buildForStudentIds(ids) {
   if (!ids) {
     return;
@@ -120,7 +121,7 @@ async function buildForTeacher(payload) {
     return;
   }
   const re = new RegExp(TEACHER_PATTERN, 'gi');
-  const ids = tids.map(tid => tid.replace(re, ''));
+  const ids = filterRepeated(tids.map(tid => tid.replace(re, '')));
   return ids.map(id => `П ${id}:  <${idLink}${id}|ID> \n`).join('');
 }
 
@@ -129,7 +130,7 @@ async function buildCommon(payload) {
   if (!ids) {
     return;
   }
-  return await buildForStudentIds(ids)
+  return await buildForStudentIds(ids);
 }
 
 async function buildForGroup(payload) {
@@ -138,7 +139,7 @@ async function buildForGroup(payload) {
     return;
   }
   const re = new RegExp(GROUP_PATTERN, 'gi');
-  ids = ids.map(id => id.replace(re, ''));
+  ids = filterRepeated(ids.map(id => id.replace(re, '')));
   return ids.map(id => `<${crm1GroupLink}${id}|группа ${id}> \n`).join('');
 }
 
@@ -187,4 +188,13 @@ function cleanText(text) {
   return text.replace(/\n/g, ' ')
       .replace(/<.*?>|`|'/g, '')
       .substring(0, 20);
+}
+
+function filterRepeated(arr) {
+  if (!arr){
+    return []
+  }
+  const res = {}
+  arr.forEach(it => res[it] = 1)
+  return Object.keys(res);
 }
