@@ -57,6 +57,9 @@ async function buildResponse(payload) {
   let text = '';
   text += await buildForStudent(payload);
   text += await buildForTeacher(payload);
+  if (!text) {
+    text += await buildCommon(payload);
+  }
   text += await buildForGroup(payload);
 
   if (!text) {
@@ -77,6 +80,11 @@ function getStudentRequest(payload) {
 
 function getTeacherRequest(payload) {
   const re = new RegExp(teacherPattern + '\\d{5,}', 'gi');
+  return payload.text.match(re) || [];
+}
+
+function getCommonRequest(payload) {
+  const re = new RegExp('\\b\\d{6,}\\b', 'gi');
   return payload.text.match(re) || [];
 }
 
@@ -107,6 +115,14 @@ async function buildForTeacher(payload) {
   const re = new RegExp(teacherPattern, 'gi');
   const ids = tids.map(tid => tid.replace(re, ''));
   return ids.map(id => `П ${id}:  <${idLink}${id}|ID> \n`).join('');
+}
+
+async function buildCommon(payload) {
+  const ids = getCommonRequest(payload);
+  if (!ids) {
+    return;
+  }
+  return ids.map(id => `${id}:  <${idLink}${id}|ID> \n`).join('');
 }
 
 async function buildForGroup(payload) {
