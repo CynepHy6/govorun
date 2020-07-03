@@ -43,9 +43,9 @@ slackEvent.on('app_mention', async payload => {
   console.log(`Listening on ${server.address().port}`);
 })();
 
-const studentPattern = '\\s*(у|лк)\\s*\\-?\\.?\\s*';
-const teacherPattern = '\\s*([п])\\s*';
-const groupPattern = '\\s*г(рупп.?|р)?\\.?\\s*';
+const STUDENT_PATTERN = '\\s*(у|лк)\\s*\\-?\\.?\\s*';
+const TEACHER_PATTERN = '\\s*([п])\\s*';
+const GROUP_PATTERN = '\\s*г(рупп.?|р)?\\.?\\s*';
 let threadTs = '';
 
 async function buildResponse(payload) {
@@ -74,12 +74,12 @@ async function buildResponse(payload) {
 }
 
 function getStudentRequest(payload) {
-  const re = new RegExp(studentPattern + '\\d{5,9}', 'gi');
+  const re = new RegExp(STUDENT_PATTERN + '\\d{5,9}', 'gi');
   return payload.text.match(re) || [];
 }
 
 function getTeacherRequest(payload) {
-  const re = new RegExp(teacherPattern + '\\d{5,9}', 'gi');
+  const re = new RegExp(TEACHER_PATTERN + '\\d{5,9}', 'gi');
   return payload.text.match(re) || [];
 }
 
@@ -89,7 +89,7 @@ function getCommonRequest(payload) {
 }
 
 function getGroupRequest(payload) {
-  const re = new RegExp(groupPattern + '\\d{4}', 'gi');
+  const re = new RegExp(GROUP_PATTERN + '\\d{4}', 'gi');
   const re2 = new RegExp('\\b\\d{4}\\b', 'gi');
   return payload.text.match(re) || payload.text.match(re2) || [];
 }
@@ -99,7 +99,7 @@ async function buildForStudent(payload) {
   if (!sids) {
     return;
   }
-  const re = new RegExp(studentPattern, 'gi');
+  const re = new RegExp(STUDENT_PATTERN, 'gi');
   const ids = sids.map(sid => sid.replace(re, ''));
   return await buildForStudentIds(ids)
 }
@@ -119,7 +119,7 @@ async function buildForTeacher(payload) {
   if (!tids) {
     return;
   }
-  const re = new RegExp(teacherPattern, 'gi');
+  const re = new RegExp(TEACHER_PATTERN, 'gi');
   const ids = tids.map(tid => tid.replace(re, ''));
   return ids.map(id => `П ${id}:  <${idLink}${id}|ID> \n`).join('');
 }
@@ -137,7 +137,7 @@ async function buildForGroup(payload) {
   if (!ids) {
     return;
   }
-  const re = new RegExp(groupPattern, 'gi');
+  const re = new RegExp(GROUP_PATTERN, 'gi');
   ids = ids.map(id => id.replace(re, ''));
   return ids.map(id => `<${crm1GroupLink}${id}|группа ${id}> \n`).join('');
 }
