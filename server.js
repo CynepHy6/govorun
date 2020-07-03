@@ -100,6 +100,12 @@ async function buildForStudent(payload) {
   }
   const re = new RegExp(studentPattern, 'gi');
   const ids = sids.map(sid => sid.replace(re, ''));
+  return await buildForStudentIds(ids)
+}
+async function buildForStudentIds(ids) {
+  if (!ids) {
+    return;
+  }
   const promises = ids.map(async id => {
     return `${id}: <${kglLink}${id}|KGL> | <${idLink}${id}|ID> | <${customerLink}${id}|customer> `
         + `${await buildSearch(id)}\n`;
@@ -122,7 +128,7 @@ async function buildCommon(payload) {
   if (!ids) {
     return;
   }
-  return ids.map(id => `${id}:  <${idLink}${id}|ID> \n`).join('');
+  return await buildForStudentIds(ids)
 }
 
 async function buildForGroup(payload) {
