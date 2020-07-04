@@ -44,10 +44,23 @@ slackEvent.on('app_mention', async payload => {
 })();
 
 const STUDENT_PATTERN_PREFIX = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
+const RE_STUDENT = new RegExp(STUDENT_PATTERN_PREFIX + '\\d{5,9}', 'gi');
+const RE_CLEAN_STUDENT = new RegExp(STUDENT_PATTERN_PREFIX, 'gi');
+
 const TEACHER_PATTERN_PREFIX = '\\s*(п|teacher_id=)\\s*';
+const RE_TEACHER = new RegExp(TEACHER_PATTERN_PREFIX + '\\d{5,9}', 'gi');
+const RE_CLEAN_TEACHER = new RegExp(TEACHER_PATTERN_PREFIX, 'gi');
+
 const GROUP_PATTERN_PREFIX = '\\s*г(рупп.?|р)?\\.?\\s*';
+const RE_GROUP = new RegExp(GROUP_PATTERN_PREFIX + '\\d{4}', 'gi');
+const RE_GROUP2 = new RegExp('\\b\\d{4}\\b', 'gi');
+const RE_CLEAN_GROUP = new RegExp(GROUP_PATTERN_PREFIX, 'gi');
+
+const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
+
 const BAD_PATTERN = '\\d{2}[.-]\\d{2}[.-]\\d{4}';
 const RE_CLEAN = new RegExp(BAD_PATTERN, 'gi');
+
 let threadTs = '';
 
 async function buildResponse(payload) {
@@ -77,24 +90,19 @@ async function buildResponse(payload) {
 }
 
 function getStudentRequest(payload) {
-  const re = new RegExp(STUDENT_PATTERN_PREFIX + '\\d{5,9}', 'gi');
-  return payload.text.match(re) || [];
+  return payload.text.match(RE_STUDENT) || [];
 }
 
 function getTeacherRequest(payload) {
-  const re = new RegExp(TEACHER_PATTERN_PREFIX + '\\d{5,9}', 'gi');
-  return payload.text.match(re) || [];
+  return payload.text.match(RE_TEACHER) || [];
 }
 
 function getCommonRequest(payload) {
-  const re = new RegExp('\\b\\d{5,9}\\b', 'gi');
-  return payload.text.match(re) || [];
+  return payload.text.match(RE_COMMON) || [];
 }
 
 function getGroupRequest(payload) {
-  const re = new RegExp(GROUP_PATTERN_PREFIX + '\\d{4}', 'gi');
-  const re2 = new RegExp('\\b\\d{4}\\b', 'gi');
-  return payload.text.match(re) || payload.text.match(re2) || [];
+  return payload.text.match(RE_GROUP) || payload.text.match(RE_GROUP2) || [];
 }
 
 async function buildForStudent(payload) {
@@ -102,8 +110,7 @@ async function buildForStudent(payload) {
   if (!sids) {
     return;
   }
-  const re = new RegExp(STUDENT_PATTERN_PREFIX, 'gi');
-  const ids = filterRepeated(sids.map(sid => sid.replace(re, '')));
+  const ids = filterRepeated(sids.map(sid => sid.replace(RE_CLEAN_STUDENT, '')));
   return await buildForStudentIds(ids);
 }
 
@@ -123,8 +130,7 @@ async function buildForTeacher(payload) {
   if (!tids) {
     return;
   }
-  const re = new RegExp(TEACHER_PATTERN_PREFIX, 'gi');
-  const ids = filterRepeated(tids.map(tid => tid.replace(re, '')));
+  const ids = filterRepeated(tids.map(tid => tid.replace(RE_CLEAN_TEACHER, '')));
   return ids.map(id => `П ${id}:  <${idLink}${id}|ID> \n`).join('');
 }
 
@@ -141,8 +147,7 @@ async function buildForGroup(payload) {
   if (!ids) {
     return;
   }
-  const re = new RegExp(GROUP_PATTERN_PREFIX, 'gi');
-  ids = filterRepeated(ids.map(id => id.replace(re, '')));
+  ids = filterRepeated(ids.map(id => id.replace(RE_CLEAN_GROUP, '')));
   return ids.map(id => `<${crm1GroupLink}${id}|группа ${id}> \n`).join('');
 }
 
