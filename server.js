@@ -58,7 +58,7 @@ const RE_CLEAN_GROUP = new RegExp(GROUP_PATTERN_PREFIX, 'gi');
 
 const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
 
-const BAD_PATTERN = '\\d{2}[.-]\\d{2}[.-]\\d{4}';
+const BAD_PATTERN = '\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}';
 const RE_CLEAN = new RegExp(BAD_PATTERN, 'gi');
 
 let threadTs = '';
