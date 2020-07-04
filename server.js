@@ -46,12 +46,15 @@ slackEvent.on('app_mention', async payload => {
 const STUDENT_PATTERN_PREFIX = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
 const TEACHER_PATTERN_PREFIX = '\\s*(п|teacher_id=)\\s*';
 const GROUP_PATTERN_PREFIX = '\\s*г(рупп.?|р)?\\.?\\s*';
+const BAD_PATTERN = '\\d{2}[.-]\\d{2}[.-]\\d{4}';
+const RE_CLEAN = new RegExp(BAD_PATTERN, 'gi');
 let threadTs = '';
 
 async function buildResponse(payload) {
   if (!payload.text) {
     return;
   }
+  payload = cleanPayloadText(payload)
   threadTs = payload.thread_ts;
   console.log(payload);
   let text = '';
@@ -191,4 +194,9 @@ function filterRepeated(arr) {
   const res = {}
   arr.forEach(it => res[it] = 1)
   return Object.keys(res);
+}
+
+function cleanPayloadText(payload) {
+  payload.text = payload.text.replace(RE_CLEAN, '')
+  return payload;
 }
