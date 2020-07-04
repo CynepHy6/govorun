@@ -43,7 +43,7 @@ slackEvent.on('app_mention', async payload => {
   console.log(`Listening on ${server.address().port}`);
 })();
 
-const STUDENT_PATTERN = '\\s*(у|лк|student_id=)\\s*\\-?\\.?\\s*';
+const STUDENT_PATTERN = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
 const TEACHER_PATTERN = '\\s*(п|teacher_id=)\\s*';
 const GROUP_PATTERN = '\\s*г(рупп.?|р)?\\.?\\s*';
 let threadTs = '';
