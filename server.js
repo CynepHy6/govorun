@@ -58,8 +58,8 @@ const RE_CLEAN_GROUP = new RegExp(GROUP_PATTERN_PREFIX, 'gi');
 
 const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
 
-const BAD_PATTERN = '\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}';
-const RE_CLEAN = new RegExp(BAD_PATTERN, 'gi');
+const EXCLUDED = '\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|tickets\\/\\d+';
+const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 
 let threadTs = '';
 
@@ -202,6 +202,6 @@ function filterRepeated(arr) {
 }
 
 function cleanPayloadText(payload) {
-  payload.text = payload.text.replace(RE_CLEAN, '')
+  payload.text = payload.text.replace(RE_EXCLUDED, '')
   return payload;
 }
