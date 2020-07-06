@@ -109,7 +109,10 @@ function getCommonRequest(payload) {
 }
 
 function getGroupRequest(payload) {
-    return payload.text.match(RE_GROUP) || payload.text.match(RE_GROUP2) || [];
+    const ids1 = payload.text.match(RE_GROUP) || []
+    const ids2 = payload.text.match(RE_GROUP2) || []
+
+    return [...ids1, ...ids2];
 }
 
 async function buildForStudent(payload) {
