@@ -58,7 +58,7 @@ const RE_CLEAN_GROUP = new RegExp(GROUP_PATTERN_PREFIX, 'gi');
 
 const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
 
-const EXCLUDED = '\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|tickets\\/\\d+';
+const EXCLUDED = '\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|tickets\\/\\d+|details\\/\\d+';
 const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 
 let threadTs = '';
