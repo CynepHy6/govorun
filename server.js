@@ -120,7 +120,7 @@ var EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|ti
 var RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 var SPECIAL = {
     '10148852': '<@UJAGQRJM8>',
-    '1734': '<@UJAGQRJM8>'
+    '1734.*степа|степа.*1734': '<@UJAGQRJM8>'
 };
 var SPECIAL_KEYS = Object.keys(SPECIAL);
 var threadTs = '';
@@ -334,6 +334,9 @@ function cleanPayloadText(payload) {
     return payload;
 }
 function buildPersonal(payload) {
-    var specials = SPECIAL_KEYS.map(function (key) { return payload.text.includes(key) ? SPECIAL[key] + " fyi" : false; }).filter(function (it) { return it; });
+    var specials = SPECIAL_KEYS.map(function (key) {
+        var reKey = new RegExp(key, 'gi');
+        return reKey.test(payload.text) ? SPECIAL[key] + " fyi" : false;
+    }).filter(function (it) { return it; });
     return filterRepeated(specials).join(', ');
 }

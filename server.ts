@@ -65,7 +65,7 @@ const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 
 const SPECIAL = {
   '10148852': '<@UJAGQRJM8>',
-  '1734': '<@UJAGQRJM8>',
+  '1734.*степа|степа.*1734': '<@UJAGQRJM8>',
 };
 const SPECIAL_KEYS = Object.keys(SPECIAL);
 
@@ -219,6 +219,9 @@ function cleanPayloadText(payload: Payload): Payload {
 }
 
 function buildPersonal(payload: Payload): string {
-  const specials = SPECIAL_KEYS.map(key => payload.text.includes(key) ? `${SPECIAL[key]} fyi` : false).filter(it => it);
+  const specials = SPECIAL_KEYS.map(key => {
+    const reKey = new RegExp(key, 'gi');
+    return reKey.test(payload.text) ? `${SPECIAL[key]} fyi` : false
+  }).filter(it => it);
   return filterRepeated(specials).join(', ');
 }
