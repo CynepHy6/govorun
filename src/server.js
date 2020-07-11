@@ -43,6 +43,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
+exports.buildResponse = void 0;
 var env = require('dotenv');
 var createEventAdapter = require('@slack/events-api').createEventAdapter;
 var WebClient = require('@slack/web-api').WebClient;
@@ -142,7 +143,7 @@ function buildResponse(payload) {
                         return [2 /*return*/];
                     }
                     payload = cleanPayloadText(payload);
-                    threadTs = payload.thread_ts;
+                    threadTs = payload.thread_ts || '';
                     console.log(payload);
                     text = '';
                     _a = text;
@@ -173,6 +174,7 @@ function buildResponse(payload) {
         });
     });
 }
+exports.buildResponse = buildResponse;
 function postMessage(payload, text) {
     return __awaiter(this, void 0, void 0, function () {
         var result;
@@ -342,12 +344,7 @@ function formatTs(ts) {
     return formatter.format(new Date(+ts * 1000));
 }
 function filterRepeated(arr) {
-    if (!arr) {
-        return [];
-    }
-    var res = {};
-    arr.forEach(function (it) { return res[it] = 1; });
-    return Object.keys(res);
+    return __spreadArrays(new Set(arr));
 }
 function cleanPayloadText(payload) {
     payload.text = payload.text.replace(RE_EXCLUDED, '');

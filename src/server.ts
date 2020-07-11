@@ -1,4 +1,4 @@
-import {Payload} from './models';
+import {Payload, SearchResult, Special} from './models';
 
 const env = require('dotenv');
 const {createEventAdapter} = require('@slack/events-api');
@@ -13,7 +13,7 @@ const {WebClient} = require('@slack/web-api');
 //
 // app.listen(80);
 
-env.config({ path: '../.env' });
+env.config({path: '../.env'});
 const secret = process.env.SLACK_SIGNING_SECRET;
 const botToken = process.env.SLACK_BOT_TOKEN;
 const userToken = process.env.SLACK_USER_TOKEN;
@@ -45,7 +45,7 @@ const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
 const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|tickets\\/\\d+|details\\/\\d+';
 const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 
-const SPECIAL = {
+const SPECIAL: Special = {
   '10148852': '<@UJAGQRJM8>hoho',
   '1734(.|[\\s\\S])*степа|степа(.|[\\s\\S])*1734': '<@UJAGQRJM8>',
 };
@@ -58,7 +58,7 @@ slackEvent.on('message', async (payload: Payload) => {
   const text = await buildResponse(payload);
   await postMessage(payload, text);
 });
-slackEvent.on('app_mention', async payload => {
+slackEvent.on('app_mention', async (payload: Payload) => {
   if (!payload.thread_ts) {
     return;
   }
@@ -73,12 +73,12 @@ slackEvent.on('app_mention', async payload => {
 
 let threadTs = '';
 
-async function buildResponse(payload: Payload) {
+export async function buildResponse(payload: Payload) {
   if (!payload.text) {
     return;
   }
   payload = cleanPayloadText(payload);
-  threadTs = payload.thread_ts;
+  threadTs = payload.thread_ts || '';
   console.log(payload);
 
   let text = '';
@@ -181,7 +181,7 @@ async function buildSearch(id: string) {
   if (!result.ok) {
     return '';
   }
-  const matches = result.messages.matches || [];
+  const matches: SearchResult[] = result.messages.matches || [];
 
   if (0 === matches.length) {
     return '';
@@ -211,13 +211,8 @@ function formatTs(ts: string): string {
   return formatter.format(new Date(+ts * 1000));
 }
 
-function filterRepeated(arr): string[] {
-  if (!arr) {
-    return [];
-  }
-  const res = {};
-  arr.forEach(it => res[it] = 1);
-  return Object.keys(res);
+function filterRepeated(arr: string[]): string[] {
+  return [...new Set(arr)];
 }
 
 function cleanPayloadText(payload: Payload): Payload {
@@ -229,6 +224,6 @@ function buildPersonal(payload: Payload): string {
   const specials = SPECIAL_KEYS.map(key => {
     const reKey = new RegExp(key, 'gim');
     return reKey.test(payload.text) ? `${SPECIAL[key]} fyi` : false;
-  }).filter(it => it);
+  }).filter(it => it) as string[];
   return filterRepeated(specials).join(', ');
 }

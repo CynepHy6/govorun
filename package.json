@@ -5,7 +5,8 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "build": "tsc src/server.ts"
+    "build": "tsc src/server.ts",
+    "test": "tsc tests/serverTest.ts"
   },
   "dependencies": {
     "@slack/events-api": "^2.3.3",
