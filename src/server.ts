@@ -13,7 +13,7 @@ const {WebClient} = require('@slack/web-api');
 //
 // app.listen(80);
 
-env.config();
+env.config({ path: '../.env' });
 const secret = process.env.SLACK_SIGNING_SECRET;
 const botToken = process.env.SLACK_BOT_TOKEN;
 const userToken = process.env.SLACK_USER_TOKEN;
@@ -26,24 +26,6 @@ const kglLink = 'https://grouplessons-api.skyeng.ru/admin/student/view/';
 const idLink = 'https://id.skyeng.ru/admin/users/';
 const customerLink = 'https://fly.customer.io/env/40281/people/';
 const crm1GroupLink = 'https://crm.skyeng.ru/admin/group/edit?id=';
-
-slackEvent.on('message', async (payload: Payload) => {
-  if (payload.thread_ts) {
-    return;
-  }
-  await buildResponse(payload);
-});
-slackEvent.on('app_mention', async payload => {
-  if (!payload.thread_ts) {
-    return;
-  }
-  await buildResponse(payload);
-});
-
-(async () => {
-  const server = await slackEvent.start(process.env.PORT || 3000);
-  console.log(`Listening on ${server.address().port}`);
-})();
 
 const STUDENT_PATTERN_PREFIX = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
 const RE_STUDENT = new RegExp(STUDENT_PATTERN_PREFIX + '\\d{5,9}', 'gi');
@@ -64,10 +46,30 @@ const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|
 const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 
 const SPECIAL = {
-  '10148852': '<@UJAGQRJM8>',
+  '10148852': '<@UJAGQRJM8>hoho',
   '1734(.|[\\s\\S])*степа|степа(.|[\\s\\S])*1734': '<@UJAGQRJM8>',
 };
 const SPECIAL_KEYS = Object.keys(SPECIAL);
+
+slackEvent.on('message', async (payload: Payload) => {
+  if (payload.thread_ts) {
+    return;
+  }
+  const text = await buildResponse(payload);
+  await postMessage(payload, text);
+});
+slackEvent.on('app_mention', async payload => {
+  if (!payload.thread_ts) {
+    return;
+  }
+  const text = await buildResponse(payload);
+  await postMessage(payload, text);
+});
+
+(async () => {
+  const server = await slackEvent.start(process.env.PORT || 3000);
+  console.log(`Listening on ${server.address().port}`);
+})();
 
 let threadTs = '';
 
@@ -87,15 +89,20 @@ async function buildResponse(payload: Payload) {
   }
   text += await buildForGroup(payload);
   text += await buildPersonal(payload);
+  return text;
+}
+
+async function postMessage(payload: Payload, text?: string) {
   if (!text) {
     return;
   }
-  await slackBotClient.chat.postMessage({
+  const result = await slackBotClient.chat.postMessage({
     channel: payload.channel,
     thread_ts: payload.thread_ts || payload.ts,
     text: text,
     unfurl_links: true,
   });
+  console.log(result);
 }
 
 function getStudentRequest(payload: Payload): string[] {
@@ -221,7 +228,7 @@ function cleanPayloadText(payload: Payload): Payload {
 function buildPersonal(payload: Payload): string {
   const specials = SPECIAL_KEYS.map(key => {
     const reKey = new RegExp(key, 'gim');
-    return reKey.test(payload.text) ? `${SPECIAL[key]} fyi` : false
+    return reKey.test(payload.text) ? `${SPECIAL[key]} fyi` : false;
   }).filter(it => it);
   return filterRepeated(specials).join(', ');
 }

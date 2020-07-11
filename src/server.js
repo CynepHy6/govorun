@@ -54,7 +54,7 @@ var WebClient = require('@slack/web-api').WebClient;
 // });
 //
 // app.listen(80);
-env.config();
+env.config({ path: '../.env' });
 var secret = process.env.SLACK_SIGNING_SECRET;
 var botToken = process.env.SLACK_BOT_TOKEN;
 var userToken = process.env.SLACK_USER_TOKEN;
@@ -65,7 +65,26 @@ var kglLink = 'https://grouplessons-api.skyeng.ru/admin/student/view/';
 var idLink = 'https://id.skyeng.ru/admin/users/';
 var customerLink = 'https://fly.customer.io/env/40281/people/';
 var crm1GroupLink = 'https://crm.skyeng.ru/admin/group/edit?id=';
+var STUDENT_PATTERN_PREFIX = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
+var RE_STUDENT = new RegExp(STUDENT_PATTERN_PREFIX + '\\d{5,9}', 'gi');
+var RE_CLEAN_STUDENT = new RegExp(STUDENT_PATTERN_PREFIX, 'gi');
+var TEACHER_PATTERN_PREFIX = '\\s*(п|teacher_id=)\\s*';
+var RE_TEACHER = new RegExp(TEACHER_PATTERN_PREFIX + '\\d{5,9}', 'gi');
+var RE_CLEAN_TEACHER = new RegExp(TEACHER_PATTERN_PREFIX, 'gi');
+var GROUP_PATTERN_PREFIX = '\\s*г(рупп.?|р)?\\.?\\s*';
+var RE_GROUP = new RegExp(GROUP_PATTERN_PREFIX + '\\d{4}', 'gi');
+var RE_GROUP2 = new RegExp('\\b\\d{4}\\b', 'gi');
+var RE_CLEAN_GROUP = new RegExp(GROUP_PATTERN_PREFIX, 'gi');
+var RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
+var EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|tickets\\/\\d+|details\\/\\d+';
+var RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
+var SPECIAL = {
+    '10148852': '<@UJAGQRJM8>hoho',
+    '1734(.|[\\s\\S])*степа|степа(.|[\\s\\S])*1734': '<@UJAGQRJM8>'
+};
+var SPECIAL_KEYS = Object.keys(SPECIAL);
 slackEvent.on('message', function (payload) { return __awaiter(void 0, void 0, void 0, function () {
+    var text;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -74,12 +93,16 @@ slackEvent.on('message', function (payload) { return __awaiter(void 0, void 0, v
                 }
                 return [4 /*yield*/, buildResponse(payload)];
             case 1:
+                text = _a.sent();
+                return [4 /*yield*/, postMessage(payload, text)];
+            case 2:
                 _a.sent();
                 return [2 /*return*/];
         }
     });
 }); });
 slackEvent.on('app_mention', function (payload) { return __awaiter(void 0, void 0, void 0, function () {
+    var text;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -88,6 +111,9 @@ slackEvent.on('app_mention', function (payload) { return __awaiter(void 0, void 
                 }
                 return [4 /*yield*/, buildResponse(payload)];
             case 1:
+                text = _a.sent();
+                return [4 /*yield*/, postMessage(payload, text)];
+            case 2:
                 _a.sent();
                 return [2 /*return*/];
         }
@@ -105,24 +131,6 @@ slackEvent.on('app_mention', function (payload) { return __awaiter(void 0, void 
         }
     });
 }); })();
-var STUDENT_PATTERN_PREFIX = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
-var RE_STUDENT = new RegExp(STUDENT_PATTERN_PREFIX + '\\d{5,9}', 'gi');
-var RE_CLEAN_STUDENT = new RegExp(STUDENT_PATTERN_PREFIX, 'gi');
-var TEACHER_PATTERN_PREFIX = '\\s*(п|teacher_id=)\\s*';
-var RE_TEACHER = new RegExp(TEACHER_PATTERN_PREFIX + '\\d{5,9}', 'gi');
-var RE_CLEAN_TEACHER = new RegExp(TEACHER_PATTERN_PREFIX, 'gi');
-var GROUP_PATTERN_PREFIX = '\\s*г(рупп.?|р)?\\.?\\s*';
-var RE_GROUP = new RegExp(GROUP_PATTERN_PREFIX + '\\d{4}', 'gi');
-var RE_GROUP2 = new RegExp('\\b\\d{4}\\b', 'gi');
-var RE_CLEAN_GROUP = new RegExp(GROUP_PATTERN_PREFIX, 'gi');
-var RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
-var EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|tickets\\/\\d+|details\\/\\d+';
-var RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
-var SPECIAL = {
-    '10148852': '<@UJAGQRJM8>',
-    '1734(.|[\\s\\S])*степа|степа(.|[\\s\\S])*1734': '<@UJAGQRJM8>'
-};
-var SPECIAL_KEYS = Object.keys(SPECIAL);
 var threadTs = '';
 function buildResponse(payload) {
     return __awaiter(this, void 0, void 0, function () {
@@ -160,6 +168,17 @@ function buildResponse(payload) {
                     return [4 /*yield*/, buildPersonal(payload)];
                 case 6:
                     text = _e + _f.sent();
+                    return [2 /*return*/, text];
+            }
+        });
+    });
+}
+function postMessage(payload, text) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
                     if (!text) {
                         return [2 /*return*/];
                     }
@@ -169,8 +188,9 @@ function buildResponse(payload) {
                             text: text,
                             unfurl_links: true
                         })];
-                case 7:
-                    _f.sent();
+                case 1:
+                    result = _a.sent();
+                    console.log(result);
                     return [2 /*return*/];
             }
         });
