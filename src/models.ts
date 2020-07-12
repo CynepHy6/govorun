@@ -15,7 +15,7 @@ export interface Payload {
 export interface Block {
   type: string,
   block_id: string,
-  elements: []
+  elements: string[]
 }
 
 export interface Special {

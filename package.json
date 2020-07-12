@@ -5,12 +5,14 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "build": "tsc src/server.ts",
-    "test": "tsc tests/serverTest.ts"
+    "build": "tsc",
+    "test": "tsc && mocha test/serverTest.js"
   },
   "dependencies": {
     "@slack/events-api": "^2.3.3",
     "@slack/web-api": "^5.10.0",
+    "@types/mocha": "^8.0.0",
+    "chai": "^4.2.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1"
   },

@@ -1,6 +1,4 @@
-import {Payload} from '../src/models';
-
-export const payloadStub: Payload = {
+export const payload = {
   client_msg_id: '',
   type: '',
   text: '',
