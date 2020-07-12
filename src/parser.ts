@@ -1,4 +1,4 @@
-import {Payload, Special} from './models';
+import {Ids, Payload, Special} from './models';
 import {buildSearch} from './server';
 
 const kglLink = 'https://grouplessons-api.skyeng.ru/admin/student/view/';
@@ -25,7 +25,7 @@ const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|
 const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 
 const SPECIAL: Special = {
-  '10148852': '<@UJAGQRJM8>hoho',
+  '10148852': '<@UJAGQRJM8>',
   '1734(.|[\\s\\S])*степа|степа(.|[\\s\\S])*1734': '<@UJAGQRJM8>',
 };
 const SPECIAL_KEYS = Object.keys(SPECIAL);
@@ -37,43 +37,45 @@ export async function buildResponse(payload: Payload) {
   payload = cleanPayloadText(payload);
   console.log(payload);
 
+  const ids = parseIds(payload);
   let text = '';
-  text += await buildForStudent(payload);
-  text += await buildForTeacher(payload);
-  if (!text) {
-    text += await buildCommon(payload);
-  }
-  text += await buildForGroup(payload);
-  text += await buildPersonal(payload);
+  text += await buildForStudentIds(ids.students);
+  text += await buildForTeacherIds(ids.teachers);
+  text += await buildForGroupIds(ids.groups);
+  text += await buildSpecial(payload);
   return text;
 }
 
-function getStudentRequest(payload: Payload): string[] {
-  return payload.text.match(RE_STUDENT) || [];
+function parseIds(payload: Payload): Ids {
+  const ids = {
+    students: filterRepeated([...getStudentIds(payload), ...getCommonIds(payload)]),
+    teachers: filterRepeated(getTeacherIds(payload)),
+    groups: filterRepeated(getGroupIds(payload)),
+  };
+  ids.students = ids.students.filter(id => ids.teachers.indexOf(id) === -1);
+  return ids;
 }
 
-function getTeacherRequest(payload: Payload): string[] {
-  return payload.text.match(RE_TEACHER) || [];
+function getStudentIds(payload: Payload): string[] {
+  const sids = payload.text.match(RE_STUDENT) || [];
+  return sids.map(sid => sid.replace(RE_CLEAN_STUDENT, ''));
 }
 
-function getCommonRequest(payload: Payload): string[] {
+function getTeacherIds(payload: Payload): string[] {
+  const sids = payload.text.match(RE_TEACHER) || [];
+  return sids.map(sid => sid.replace(RE_CLEAN_TEACHER, ''));
+}
+
+function getCommonIds(payload: Payload): string[] {
   return payload.text.match(RE_COMMON) || [];
 }
 
-function getGroupRequest(payload: Payload): string[] {
+function getGroupIds(payload: Payload): string[] {
   const ids1 = payload.text.match(RE_GROUP) || [];
   const ids2 = payload.text.match(RE_GROUP2) || [];
 
-  return [...ids1, ...ids2];
-}
-
-async function buildForStudent(payload: Payload) {
-  const sids = getStudentRequest(payload);
-  if (!sids) {
-    return;
-  }
-  const ids = filterRepeated(sids.map(sid => sid.replace(RE_CLEAN_STUDENT, '')));
-  return await buildForStudentIds(ids);
+  const ids = [...ids1, ...ids2];
+  return ids.map(id => id.replace(RE_CLEAN_GROUP, ''));
 }
 
 async function buildForStudentIds(ids: string[]) {
@@ -87,29 +89,17 @@ async function buildForStudentIds(ids: string[]) {
   return (await Promise.all(promises)).join('');
 }
 
-async function buildForTeacher(payload: Payload) {
-  const tids = getTeacherRequest(payload);
-  if (!tids) {
+async function buildForTeacherIds(ids: string[]) {
+  if (!ids) {
     return;
   }
-  const ids = filterRepeated(tids.map(tid => tid.replace(RE_CLEAN_TEACHER, '')));
   return ids.map(id => `П ${id}:  <${idLink}${id}|ID> \n`).join('');
 }
 
-async function buildCommon(payload: Payload) {
-  const ids = getCommonRequest(payload);
+async function buildForGroupIds(ids: string[]) {
   if (!ids) {
     return;
   }
-  return await buildForStudentIds(ids);
-}
-
-async function buildForGroup(payload: Payload) {
-  let ids = getGroupRequest(payload);
-  if (!ids) {
-    return;
-  }
-  ids = filterRepeated(ids.map(id => id.replace(RE_CLEAN_GROUP, '')));
   return ids.map(id => `<${crm1GroupLink}${id}|группа ${id}> \n`).join('');
 }
 
@@ -122,7 +112,7 @@ function cleanPayloadText(payload: Payload): Payload {
   return payload;
 }
 
-function buildPersonal(payload: Payload): string {
+function buildSpecial(payload: Payload): string {
   const specials = SPECIAL_KEYS.map(key => {
     const reKey = new RegExp(key, 'gim');
     return reKey.test(payload.text) ? `${SPECIAL[key]} fyi` : false;

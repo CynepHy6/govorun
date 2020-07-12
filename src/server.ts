@@ -62,7 +62,7 @@ async function postMessage(payload: Payload, text?: string) {
 // TODO унести из сервера
 export async function buildSearch(id: string) {
   const query = `${id} in:#kids-groups-helpdesk -ранее -предыдущие -customer -%3C%40UQ0EUGQVA%3E`;
-  const result = await slackUserClient.search.messages({
+  const result = userToken && await slackUserClient.search.messages({
     query: query,
     sort: 'timestamp',
     count: 60,

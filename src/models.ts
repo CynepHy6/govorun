@@ -65,3 +65,9 @@ export interface Previous {
   iid: string,
   permalink: string
 }
+
+export interface Ids {
+  students: string[],
+  teachers: string[],
+  groups: string[]
+}

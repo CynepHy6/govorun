@@ -68,11 +68,11 @@ function postMessage(payload, text) {
 function buildSearch(id) {
     return __awaiter(this, void 0, void 0, function* () {
         const query = `${id} in:#kids-groups-helpdesk -ранее -предыдущие -customer -%3C%40UQ0EUGQVA%3E`;
-        const result = yield slackUserClient.search.messages({
+        const result = userToken && (yield slackUserClient.search.messages({
             query: query,
             sort: 'timestamp',
             count: 60,
-        });
+        }));
         if (!result.ok) {
             return '';
         }

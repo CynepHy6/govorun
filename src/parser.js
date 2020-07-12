@@ -29,7 +29,7 @@ const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
 const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|tickets\\/\\d+|details\\/\\d+';
 const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 const SPECIAL = {
-    '10148852': '<@UJAGQRJM8>hoho',
+    '10148852': '<@UJAGQRJM8>',
     '1734(.|[\\s\\S])*степа|степа(.|[\\s\\S])*1734': '<@UJAGQRJM8>',
 };
 const SPECIAL_KEYS = Object.keys(SPECIAL);
@@ -40,41 +40,41 @@ function buildResponse(payload) {
         }
         payload = cleanPayloadText(payload);
         console.log(payload);
+        const ids = parseIds(payload);
         let text = '';
-        text += yield buildForStudent(payload);
-        text += yield buildForTeacher(payload);
-        if (!text) {
-            text += yield buildCommon(payload);
-        }
-        text += yield buildForGroup(payload);
-        text += yield buildPersonal(payload);
+        text += yield buildForStudentIds(ids.students);
+        text += yield buildForTeacherIds(ids.teachers);
+        text += yield buildForGroupIds(ids.groups);
+        text += yield buildSpecial(payload);
         return text;
     });
 }
 exports.buildResponse = buildResponse;
-function getStudentRequest(payload) {
-    return payload.text.match(RE_STUDENT) || [];
+function parseIds(payload) {
+    const ids = {
+        students: filterRepeated([...getStudentIds(payload), ...getCommonIds(payload)]),
+        teachers: filterRepeated(getTeacherIds(payload)),
+        groups: filterRepeated(getGroupIds(payload)),
+    };
+    ids.students = ids.students.filter(id => ids.teachers.indexOf(id) === -1);
+    return ids;
 }
-function getTeacherRequest(payload) {
-    return payload.text.match(RE_TEACHER) || [];
+function getStudentIds(payload) {
+    const sids = payload.text.match(RE_STUDENT) || [];
+    return sids.map(sid => sid.replace(RE_CLEAN_STUDENT, ''));
 }
-function getCommonRequest(payload) {
+function getTeacherIds(payload) {
+    const sids = payload.text.match(RE_TEACHER) || [];
+    return sids.map(sid => sid.replace(RE_CLEAN_TEACHER, ''));
+}
+function getCommonIds(payload) {
     return payload.text.match(RE_COMMON) || [];
 }
-function getGroupRequest(payload) {
+function getGroupIds(payload) {
     const ids1 = payload.text.match(RE_GROUP) || [];
     const ids2 = payload.text.match(RE_GROUP2) || [];
-    return [...ids1, ...ids2];
-}
-function buildForStudent(payload) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const sids = getStudentRequest(payload);
-        if (!sids) {
-            return;
-        }
-        const ids = filterRepeated(sids.map(sid => sid.replace(RE_CLEAN_STUDENT, '')));
-        return yield buildForStudentIds(ids);
-    });
+    const ids = [...ids1, ...ids2];
+    return ids.map(id => id.replace(RE_CLEAN_GROUP, ''));
 }
 function buildForStudentIds(ids) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -88,32 +88,19 @@ function buildForStudentIds(ids) {
         return (yield Promise.all(promises)).join('');
     });
 }
-function buildForTeacher(payload) {
+function buildForTeacherIds(ids) {
     return __awaiter(this, void 0, void 0, function* () {
-        const tids = getTeacherRequest(payload);
-        if (!tids) {
+        if (!ids) {
             return;
         }
-        const ids = filterRepeated(tids.map(tid => tid.replace(RE_CLEAN_TEACHER, '')));
         return ids.map(id => `П ${id}:  <${idLink}${id}|ID> \n`).join('');
     });
 }
-function buildCommon(payload) {
+function buildForGroupIds(ids) {
     return __awaiter(this, void 0, void 0, function* () {
-        const ids = getCommonRequest(payload);
         if (!ids) {
             return;
         }
-        return yield buildForStudentIds(ids);
-    });
-}
-function buildForGroup(payload) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let ids = getGroupRequest(payload);
-        if (!ids) {
-            return;
-        }
-        ids = filterRepeated(ids.map(id => id.replace(RE_CLEAN_GROUP, '')));
         return ids.map(id => `<${crm1GroupLink}${id}|группа ${id}> \n`).join('');
     });
 }
@@ -124,7 +111,7 @@ function cleanPayloadText(payload) {
     payload.text = payload.text.replace(RE_EXCLUDED, '');
     return payload;
 }
-function buildPersonal(payload) {
+function buildSpecial(payload) {
     const specials = SPECIAL_KEYS.map(key => {
         const reKey = new RegExp(key, 'gim');
         return reKey.test(payload.text) ? `${SPECIAL[key]} fyi` : false;
