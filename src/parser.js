@@ -26,7 +26,7 @@ const RE_GROUP = new RegExp(GROUP_PATTERN_PREFIX + '\\d{4}', 'gi');
 const RE_GROUP2 = new RegExp('\\b\\d{4}\\b', 'gi');
 const RE_CLEAN_GROUP = new RegExp(GROUP_PATTERN_PREFIX, 'gi');
 const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
-const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|tickets\\/\\d+|details\\/\\d+';
+const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|tickets\\/\\d+|details\\/\\d+|pageId=.*?\\d+';
 const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 const SPECIAL = {
     '10148852': '<@UJAGQRJM8>',
