@@ -2,41 +2,11 @@ import {payload} from '../src/stubs';
 import {buildResponse} from '../src/parser';
 
 const expect = require('chai').expect;
+const log = console.log;
 console.log = () => {};
 const student = (id: number) => `${id}: <https://grouplessons-api.skyeng.ru/admin/student/view/${id}|KGL>` +
     ` | <https://id.skyeng.ru/admin/users/${id}|ID> | <https://fly.customer.io/env/40281/people/${id}|customer> \n`;
-const group = (id: number) => `<https://crm.skyeng.ru/admin/group/edit?id=${id}|группа ${id}> \n`;
-const teacher = (id: number) => `П ${id}:  <https://id.skyeng.ru/admin/users/${id}|ID> \n`;
-
-describe('упоминание группы', () => {
-  it('айди', async function() {
-    payload.text = '1234';
-    const [result] = await Promise.all([buildResponse(payload)]);
-    expect(group(1234)).equal(result);
-  });
-  describe('спец', () => {
-    it('Г имя', async function() {
-      payload.text = '1734 степа';
-      const [result] = await Promise.all([buildResponse(payload)]);
-      expect(group(1734) + '<@UJAGQRJM8> fyi').equal(result);
-    });
-    it('Г \\n имя', async function() {
-      payload.text = '1734 \n abracadabra степа';
-      const [result] = await Promise.all([buildResponse(payload)]);
-      expect(group(1734) + '<@UJAGQRJM8> fyi').equal(result);
-    });
-    it('имя Г', async function() {
-      payload.text = 'степа 1734';
-      const [result] = await Promise.all([buildResponse(payload)]);
-      expect(group(1734) + '<@UJAGQRJM8> fyi').equal(result);
-    });
-    it('имя \\n Г', async function() {
-      payload.text = 'степа \n abracadabra 1734';
-      const [result] = await Promise.all([buildResponse(payload)]);
-      expect(group(1734) + '<@UJAGQRJM8> fyi').equal(result);
-    });
-  });
-});
+const teacher = (id: number) => `${id}:  <https://id.skyeng.ru/admin/users/${id}|ID> \n`;
 
 describe('упоминание студента', () => {
   it('айди', async function() {
@@ -76,5 +46,12 @@ describe('упоминание студента', () => {
     payload.text = '10148852';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(10148852) + '<@UJAGQRJM8> fyi').equal(result);
+  });
+
+  it('У + номер с дефисами', async function() {
+    payload.text = '12345678 123-123456 123123-123456-123456 123123-123456-';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    log(result)
+    expect(student(12345678)).equal(result);
   });
 });

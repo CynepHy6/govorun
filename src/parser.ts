@@ -1,27 +1,20 @@
 import {Ids, Payload, Special} from './models';
 import {buildSearch} from './server';
+import {EXCLUDED, GROUP, STUDENT, TEACHER} from './patterns';
 
 const kglLink = 'https://grouplessons-api.skyeng.ru/admin/student/view/';
 const idLink = 'https://id.skyeng.ru/admin/users/';
 const customerLink = 'https://fly.customer.io/env/40281/people/';
 const crm1GroupLink = 'https://crm.skyeng.ru/admin/group/edit?id=';
 
-const STUDENT_PATTERN_PREFIX = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
-const RE_STUDENT = new RegExp(STUDENT_PATTERN_PREFIX + '\\d{5,9}', 'gi');
-const RE_CLEAN_STUDENT = new RegExp(STUDENT_PATTERN_PREFIX, 'gi');
-
-const TEACHER_PATTERN_PREFIX = '\\s*(п|teacher_id=)\\s*';
-const RE_TEACHER = new RegExp(TEACHER_PATTERN_PREFIX + '\\d{5,9}', 'gi');
-const RE_CLEAN_TEACHER = new RegExp(TEACHER_PATTERN_PREFIX, 'gi');
-
-const GROUP_PATTERN_PREFIX = '\\s*г(рупп.?|р)?\\.?\\s*';
-const RE_GROUP = new RegExp(GROUP_PATTERN_PREFIX + '\\d{4}', 'gi');
+const RE_STUDENT = new RegExp(STUDENT + '\\d{5,9}', 'gi');
+const RE_CLEAN_STUDENT = new RegExp(STUDENT, 'gi');
+const RE_TEACHER = new RegExp(TEACHER + '\\d{5,9}', 'gi');
+const RE_CLEAN_TEACHER = new RegExp(TEACHER, 'gi');
+const RE_GROUP = new RegExp(GROUP + '\\d{4}', 'gi');
 const RE_GROUP2 = new RegExp('\\b\\d{4}\\b', 'gi');
-const RE_CLEAN_GROUP = new RegExp(GROUP_PATTERN_PREFIX, 'gi');
-
+const RE_CLEAN_GROUP = new RegExp(GROUP, 'gi');
 const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
-
-const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|tickets\\/\\d+|details\\/\\d+';
 const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 
 const SPECIAL: Special = {
@@ -93,7 +86,7 @@ async function buildForTeacherIds(ids: string[]) {
   if (!ids) {
     return;
   }
-  return ids.map(id => `П ${id}:  <${idLink}${id}|ID> \n`).join('');
+  return ids.map(id => `${id}:  <${idLink}${id}|ID> \n`).join('');
 }
 
 async function buildForGroupIds(ids: string[]) {

@@ -11,23 +11,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.buildResponse = void 0;
 const server_1 = require("./server");
+const patterns_1 = require("./patterns");
 const kglLink = 'https://grouplessons-api.skyeng.ru/admin/student/view/';
 const idLink = 'https://id.skyeng.ru/admin/users/';
 const customerLink = 'https://fly.customer.io/env/40281/people/';
 const crm1GroupLink = 'https://crm.skyeng.ru/admin/group/edit?id=';
-const STUDENT_PATTERN_PREFIX = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
-const RE_STUDENT = new RegExp(STUDENT_PATTERN_PREFIX + '\\d{5,9}', 'gi');
-const RE_CLEAN_STUDENT = new RegExp(STUDENT_PATTERN_PREFIX, 'gi');
-const TEACHER_PATTERN_PREFIX = '\\s*(п|teacher_id=)\\s*';
-const RE_TEACHER = new RegExp(TEACHER_PATTERN_PREFIX + '\\d{5,9}', 'gi');
-const RE_CLEAN_TEACHER = new RegExp(TEACHER_PATTERN_PREFIX, 'gi');
-const GROUP_PATTERN_PREFIX = '\\s*г(рупп.?|р)?\\.?\\s*';
-const RE_GROUP = new RegExp(GROUP_PATTERN_PREFIX + '\\d{4}', 'gi');
+const RE_STUDENT = new RegExp(patterns_1.STUDENT + '\\d{5,9}', 'gi');
+const RE_CLEAN_STUDENT = new RegExp(patterns_1.STUDENT, 'gi');
+const RE_TEACHER = new RegExp(patterns_1.TEACHER + '\\d{5,9}', 'gi');
+const RE_CLEAN_TEACHER = new RegExp(patterns_1.TEACHER, 'gi');
+const RE_GROUP = new RegExp(patterns_1.GROUP + '\\d{4}', 'gi');
 const RE_GROUP2 = new RegExp('\\b\\d{4}\\b', 'gi');
-const RE_CLEAN_GROUP = new RegExp(GROUP_PATTERN_PREFIX, 'gi');
+const RE_CLEAN_GROUP = new RegExp(patterns_1.GROUP, 'gi');
 const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
-const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}|tickets\\/\\d+|details\\/\\d+';
-const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
+const RE_EXCLUDED = new RegExp(patterns_1.EXCLUDED, 'gi');
 const SPECIAL = {
     '10148852': '<@UJAGQRJM8>',
     '1734(.|[\\s\\S])*степа|степа(.|[\\s\\S])*1734': '<@UJAGQRJM8>',
@@ -93,7 +90,7 @@ function buildForTeacherIds(ids) {
         if (!ids) {
             return;
         }
-        return ids.map(id => `П ${id}:  <${idLink}${id}|ID> \n`).join('');
+        return ids.map(id => `${id}:  <${idLink}${id}|ID> \n`).join('');
     });
 }
 function buildForGroupIds(ids) {

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "build": "tsc",
-    "test": "tsc && mocha test/parser.js"
+    "test": "tsc && mocha test/"
   },
   "dependencies": {
     "@slack/events-api": "^2.3.3",
