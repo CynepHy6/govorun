@@ -18,7 +18,7 @@ const student = (id) => `${id}: <https://grouplessons-api.skyeng.ru/admin/studen
     ` | <https://id.skyeng.ru/admin/users/${id}|ID> | <https://fly.customer.io/env/40281/people/${id}|customer> \n`;
 const teacher = (id) => `${id}:  <https://id.skyeng.ru/admin/users/${id}|ID> \n`;
 describe('упоминание студента', () => {
-    it('айди', function () {
+    it('#', function () {
         return __awaiter(this, void 0, void 0, function* () {
             stubs_1.payload.text = '12345678';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
@@ -39,21 +39,21 @@ describe('упоминание студента', () => {
             expect(student(12345678)).equal(result);
         });
     });
-    it('У + айди', function () {
+    it('У + #', function () {
         return __awaiter(this, void 0, void 0, function* () {
             stubs_1.payload.text = 'у 12345678 99999999';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(12345678) + student(99999999)).equal(result);
         });
     });
-    it('У У + айди', function () {
+    it('У У + #', function () {
         return __awaiter(this, void 0, void 0, function* () {
             stubs_1.payload.text = 'у 12345678 12345678 99999999';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(12345678) + student(99999999)).equal(result);
         });
     });
-    it('У У + айди + П', function () {
+    it('У У + # + П', function () {
         return __awaiter(this, void 0, void 0, function* () {
             stubs_1.payload.text = 'у 12345678 П 12345678 99999999';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
@@ -67,9 +67,17 @@ describe('упоминание студента', () => {
             expect(student(10148852) + '<@UJAGQRJM8> fyi').equal(result);
         });
     });
-    it('У + номер с дефисами', function () {
+    it('У + # с дефисами', function () {
         return __awaiter(this, void 0, void 0, function* () {
             stubs_1.payload.text = '12345678 123-123456 123123-123456-123456 123123-123456-';
+            const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
+            log(result);
+            expect(student(12345678)).equal(result);
+        });
+    });
+    it('У + # с точками', function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            stubs_1.payload.text = '12345678 p1594304604116600?thread_ts=1594303884.114500';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             log(result);
             expect(student(12345678)).equal(result);

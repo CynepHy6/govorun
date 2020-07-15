@@ -9,7 +9,7 @@ const student = (id: number) => `${id}: <https://grouplessons-api.skyeng.ru/admi
 const teacher = (id: number) => `${id}:  <https://id.skyeng.ru/admin/users/${id}|ID> \n`;
 
 describe('упоминание студента', () => {
-  it('айди', async function() {
+  it('#', async function() {
     payload.text = '12345678';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(12345678)).equal(result);
@@ -24,19 +24,19 @@ describe('упоминание студента', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(12345678)).equal(result);
   });
-  it('У + айди', async function() {
+  it('У + #', async function() {
     payload.text = 'у 12345678 99999999';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(12345678) + student(99999999)).equal(result);
   });
 
-  it('У У + айди', async function() {
+  it('У У + #', async function() {
     payload.text = 'у 12345678 12345678 99999999';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(12345678) + student(99999999)).equal(result);
   });
 
-  it('У У + айди + П', async function() {
+  it('У У + # + П', async function() {
     payload.text = 'у 12345678 П 12345678 99999999';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(99999999) + teacher(12345678)).equal(result);
@@ -48,8 +48,14 @@ describe('упоминание студента', () => {
     expect(student(10148852) + '<@UJAGQRJM8> fyi').equal(result);
   });
 
-  it('У + номер с дефисами', async function() {
+  it('У + # с дефисами', async function() {
     payload.text = '12345678 123-123456 123123-123456-123456 123123-123456-';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    log(result)
+    expect(student(12345678)).equal(result);
+  });
+  it('У + # с точками', async function() {
+    payload.text = '12345678 p1594304604116600?thread_ts=1594303884.114500';
     const [result] = await Promise.all([buildResponse(payload)]);
     log(result)
     expect(student(12345678)).equal(result);
