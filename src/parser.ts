@@ -31,12 +31,11 @@ export async function buildResponse(payload: Payload) {
   console.log(payload);
 
   const ids = parseIds(payload);
-  let text = '';
-  text += await buildForStudentIds(ids.students);
-  text += await buildForTeacherIds(ids.teachers);
-  text += await buildForGroupIds(ids.groups);
-  text += await buildSpecial(payload);
-  return text;
+  return ''
+      + await buildForStudentIds(ids.students)
+      + await buildForTeacherIds(ids.teachers)
+      + await buildForGroupIds(ids.groups)
+      + await buildSpecial(payload);
 }
 
 function parseIds(payload: Payload): Ids {

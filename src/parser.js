@@ -38,12 +38,11 @@ function buildResponse(payload) {
         payload = cleanPayloadText(payload);
         console.log(payload);
         const ids = parseIds(payload);
-        let text = '';
-        text += yield buildForStudentIds(ids.students);
-        text += yield buildForTeacherIds(ids.teachers);
-        text += yield buildForGroupIds(ids.groups);
-        text += yield buildSpecial(payload);
-        return text;
+        return ''
+            + (yield buildForStudentIds(ids.students))
+            + (yield buildForTeacherIds(ids.teachers))
+            + (yield buildForGroupIds(ids.groups))
+            + (yield buildSpecial(payload));
     });
 }
 exports.buildResponse = buildResponse;
