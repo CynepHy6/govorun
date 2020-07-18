@@ -72,4 +72,10 @@ describe('упоминание студента', () => {
     log(result)
     expect(student(12345678)).equal(result);
   });
+  it('# + ##', async function() {
+    payload.text = 'У 1234567 У 12345678912';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    log(result)
+    expect(student(1234567)).equal(result);
+  });
 });

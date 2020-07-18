@@ -99,4 +99,12 @@ describe('упоминание студента', () => {
             expect(student(12345678)).equal(result);
         });
     });
+    it('# + ##', function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            stubs_1.payload.text = 'У 1234567 У 12345678912';
+            const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
+            log(result);
+            expect(student(1234567)).equal(result);
+        });
+    });
 });
