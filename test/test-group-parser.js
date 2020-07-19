@@ -25,30 +25,30 @@ describe('упоминание группы', () => {
     describe('спец', () => {
         it('Г имя', function () {
             return __awaiter(this, void 0, void 0, function* () {
-                stubs_1.payload.text = '1734 степа';
+                stubs_1.payload.text = '1832 степа';
                 const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
-                expect(group(1734) + '<@UJAGQRJM8> fyi').equal(result);
+                expect(group(1832) + '<@UJAGQRJM8> fyi').equal(result);
             });
         });
         it('Г \\n имя', function () {
             return __awaiter(this, void 0, void 0, function* () {
-                stubs_1.payload.text = '1734 \n abracadabra степа';
+                stubs_1.payload.text = '1832 \n abracadabra степа';
                 const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
-                expect(group(1734) + '<@UJAGQRJM8> fyi').equal(result);
+                expect(group(1832) + '<@UJAGQRJM8> fyi').equal(result);
             });
         });
         it('имя Г', function () {
             return __awaiter(this, void 0, void 0, function* () {
-                stubs_1.payload.text = 'степа 1734';
+                stubs_1.payload.text = 'степа 1832';
                 const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
-                expect(group(1734) + '<@UJAGQRJM8> fyi').equal(result);
+                expect(group(1832) + '<@UJAGQRJM8> fyi').equal(result);
             });
         });
         it('имя \\n Г', function () {
             return __awaiter(this, void 0, void 0, function* () {
-                stubs_1.payload.text = 'степа \n abracadabra 1734';
+                stubs_1.payload.text = 'степа \n abracadabra 1832';
                 const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
-                expect(group(1734) + '<@UJAGQRJM8> fyi').equal(result);
+                expect(group(1832) + '<@UJAGQRJM8> fyi').equal(result);
             });
         });
     });

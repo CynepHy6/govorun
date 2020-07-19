@@ -27,7 +27,7 @@ const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
 const RE_EXCLUDED = new RegExp(patterns_1.EXCLUDED, 'gi');
 const SPECIAL = {
     '10148852': '<@UJAGQRJM8>',
-    '1734(.|[\\s\\S])*степа|степа(.|[\\s\\S])*1734': '<@UJAGQRJM8>',
+    '1832(.|[\\s\\S])*ст.па|ст.па(.|[\\s\\S])*1832': '<@UJAGQRJM8>',
 };
 const SPECIAL_KEYS = Object.keys(SPECIAL);
 function buildResponse(payload) {

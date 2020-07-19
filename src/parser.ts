@@ -19,7 +19,7 @@ const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 
 const SPECIAL: Special = {
   '10148852': '<@UJAGQRJM8>',
-  '1734(.|[\\s\\S])*степа|степа(.|[\\s\\S])*1734': '<@UJAGQRJM8>',
+  '1832(.|[\\s\\S])*ст.па|ст.па(.|[\\s\\S])*1832': '<@UJAGQRJM8>',
 };
 const SPECIAL_KEYS = Object.keys(SPECIAL);
 
