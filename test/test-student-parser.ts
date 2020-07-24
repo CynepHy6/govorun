@@ -1,8 +1,7 @@
-import {payload} from '../src/stubs';
+import {payload} from './stubs';
 import {buildResponse} from '../src/parser';
 
 const expect = require('chai').expect;
-const log = console.log;
 console.log = () => {};
 const student = (id: number) => `${id}: <https://grouplessons-api.skyeng.ru/admin/student/view/${id}|KGL>` +
     ` | <https://id.skyeng.ru/admin/users/${id}|ID> | <https://fly.customer.io/env/40281/people/${id}|customer> \n`;
@@ -51,31 +50,31 @@ describe('упоминание студента', () => {
   it('# + -#', async function() {
     payload.text = '12345678 123-123456 123123-123456-123456 123123-123456-';
     const [result] = await Promise.all([buildResponse(payload)]);
-    log(result)
     expect(student(12345678)).equal(result);
   });
   it('# + .#', async function() {
     payload.text = '12345678 p1594304604116600?thread_ts=1594303884.114500';
     const [result] = await Promise.all([buildResponse(payload)]);
-    log(result)
     expect(student(12345678)).equal(result);
   });
   it('# + @#', async function() {
     payload.text = '12345678 1234566@mail.ru';
     const [result] = await Promise.all([buildResponse(payload)]);
-    log(result)
     expect(student(12345678)).equal(result);
   });
   it('# + pageId=#', async function() {
     payload.text = '12345678 pageId=777777';
     const [result] = await Promise.all([buildResponse(payload)]);
-    log(result)
     expect(student(12345678)).equal(result);
   });
   it('# + ##', async function() {
     payload.text = 'У 1234567 У 12345678912';
     const [result] = await Promise.all([buildResponse(payload)]);
-    log(result)
     expect(student(1234567)).equal(result);
+  });
+  it('.# #.', async function() {
+    payload.text = '.1234567 1234568.';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(student(1234567) + student(1234568)).equal(result);
   });
 });

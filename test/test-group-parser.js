@@ -9,17 +9,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const stubs_1 = require("../src/stubs");
+const stubs_1 = require("./stubs");
 const parser_1 = require("../src/parser");
 const expect = require('chai').expect;
 console.log = () => { };
 const group = (id) => `<https://crm.skyeng.ru/admin/group/edit?id=${id}|группа ${id}> \n`;
 describe('упоминание группы', () => {
-    it('айди', function () {
+    it('Г', function () {
         return __awaiter(this, void 0, void 0, function* () {
             stubs_1.payload.text = '1234';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(group(1234)).equal(result);
+        });
+    });
+    it('Г. .Г', function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            stubs_1.payload.text = '1234. .1235';
+            const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
+            expect(group(1234) + group(1235)).equal(result);
+        });
+    });
+    it('Г_ _Г', function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            stubs_1.payload.text = '1234_ _1235';
+            const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
+            expect(group(1234) + group(1235)).equal(result);
         });
     });
     describe('спец', () => {

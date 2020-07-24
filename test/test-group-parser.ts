@@ -1,4 +1,4 @@
-import {payload} from '../src/stubs';
+import {payload} from './stubs';
 import {buildResponse} from '../src/parser';
 
 const expect = require('chai').expect;
@@ -6,11 +6,22 @@ console.log = () => {};
 const group = (id: number) => `<https://crm.skyeng.ru/admin/group/edit?id=${id}|группа ${id}> \n`;
 
 describe('упоминание группы', () => {
-  it('айди', async function() {
+  it('Г', async function() {
     payload.text = '1234';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(group(1234)).equal(result);
   });
+  it('Г. .Г', async function() {
+    payload.text = '1234. .1235';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(group(1234) + group(1235)).equal(result);
+  });
+  it('Г_ _Г', async function() {
+    payload.text = '1234_ _1235';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(group(1234) + group(1235)).equal(result);
+  });
+
   describe('спец', () => {
     it('Г имя', async function() {
       payload.text = '1832 степа';

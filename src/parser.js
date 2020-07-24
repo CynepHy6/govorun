@@ -11,25 +11,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.buildResponse = void 0;
 const server_1 = require("./server");
-const patterns_1 = require("./patterns");
-const kglLink = 'https://grouplessons-api.skyeng.ru/admin/student/view/';
-const idLink = 'https://id.skyeng.ru/admin/users/';
-const customerLink = 'https://fly.customer.io/env/40281/people/';
-const crm1GroupLink = 'https://crm.skyeng.ru/admin/group/edit?id=';
-const RE_STUDENT = new RegExp(patterns_1.STUDENT + '\\d{5,9}', 'gi');
-const RE_CLEAN_STUDENT = new RegExp(patterns_1.STUDENT, 'gi');
-const RE_TEACHER = new RegExp(patterns_1.TEACHER + '\\d{5,9}', 'gi');
-const RE_CLEAN_TEACHER = new RegExp(patterns_1.TEACHER, 'gi');
-const RE_GROUP = new RegExp(patterns_1.GROUP + '\\d{4}', 'gi');
-const RE_GROUP2 = new RegExp('\\b\\d{4}\\b', 'gi');
-const RE_CLEAN_GROUP = new RegExp(patterns_1.GROUP, 'gi');
+const STUDENT = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
+const TEACHER = '\\s*(п|teacher_id=)\\s*';
+const GROUP = '(\\s*г(рупп.?|р)?\\.?\\s*)';
+const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}'
+    + '|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}'
+    + '|tickets\\/\\d+'
+    + '|details\\/\\d+'
+    + '|thread_ts=\\d+[.]\\d+'
+    + '|(\\d+[+@-])+\\d*|[+@-]\\d+'
+    + '|pageId=.*?\\d+'
+    + '|\\d{10,}'
+    + '|[_]';
+const RE_STUDENT = new RegExp(STUDENT + '\\d{5,9}', 'gi');
+const RE_CLEAN_STUDENT = new RegExp(STUDENT, 'gi');
+const RE_TEACHER = new RegExp(TEACHER + '\\d{5,9}', 'gi');
+const RE_CLEAN_TEACHER = new RegExp(TEACHER, 'gi');
+const RE_GROUP = new RegExp('\\b\\d{4}\\b', 'giu');
+const RE_CLEAN_GROUP = new RegExp(GROUP, 'gi');
 const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
-const RE_EXCLUDED = new RegExp(patterns_1.EXCLUDED, 'gi');
+const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 const SPECIAL = {
     '10148852': '<@UJAGQRJM8>',
     '1832(.|[\\s\\S])*ст.па|ст.па(.|[\\s\\S])*1832': '<@UJAGQRJM8>',
 };
 const SPECIAL_KEYS = Object.keys(SPECIAL);
+const kglLink = 'https://grouplessons-api.skyeng.ru/admin/student/view/';
+const idLink = 'https://id.skyeng.ru/admin/users/';
+const customerLink = 'https://fly.customer.io/env/40281/people/';
+const crm1GroupLink = 'https://crm.skyeng.ru/admin/group/edit?id=';
 function buildResponse(payload) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!payload.text) {
@@ -67,9 +77,7 @@ function getCommonIds(payload) {
     return payload.text.match(RE_COMMON) || [];
 }
 function getGroupIds(payload) {
-    const ids1 = payload.text.match(RE_GROUP) || [];
-    const ids2 = payload.text.match(RE_GROUP2) || [];
-    const ids = [...ids1, ...ids2];
+    const ids = payload.text.match(RE_GROUP) || [];
     return ids.map(id => id.replace(RE_CLEAN_GROUP, ''));
 }
 function buildForStudentIds(ids) {
