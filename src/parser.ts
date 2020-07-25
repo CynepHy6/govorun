@@ -1,5 +1,7 @@
 import {Ids, Payload, Special} from './models';
-import {buildSearch} from './server';
+import {search} from './server';
+import {filterRepeated, formatTs} from './utils';
+import moment from 'moment';
 
 const STUDENT = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
 const TEACHER = '\\s*(п|teacher_id=)\\s*';
@@ -34,10 +36,13 @@ const idLink = 'https://id.skyeng.ru/admin/users/';
 const customerLink = 'https://fly.customer.io/env/40281/people/';
 const crm1GroupLink = 'https://crm.skyeng.ru/admin/group/edit?id=';
 
+let threadTs: string;
+
 export async function buildResponse(payload: Payload) {
   if (!payload.text) {
     return;
   }
+  threadTs = payload.thread_ts || '';
   payload = cleanPayloadText(payload);
   console.log(payload);
 
@@ -84,7 +89,7 @@ async function buildForStudentIds(ids: string[]) {
   }
   const promises = ids.map(async id => {
     return `${id}: <${kglLink}${id}|KGL> | <${idLink}${id}|ID> | <${customerLink}${id}|customer> `
-        + `${await buildSearch(id)}\n`;
+        + `${await searchHelpdesk(id)}\n`;
   });
   return (await Promise.all(promises)).join('');
 }
@@ -100,11 +105,8 @@ async function buildForGroupIds(ids: string[]) {
   if (!ids) {
     return;
   }
-  return ids.map(id => `<${crm1GroupLink}${id}|группа ${id}> \n`).join('');
-}
-
-function filterRepeated(arr: string[]) {
-  return [...new Set(arr)];
+  const promises = ids.map(async id => `<${crm1GroupLink}${id}|группа ${id}> ${await searchZameny(id)}\n`);
+  return (await Promise.all(promises)).join('');
 }
 
 function cleanPayloadText(payload: Payload): Payload {
@@ -118,4 +120,32 @@ function buildSpecial(payload: Payload): string {
     return reKey.test(payload.text) ? `${SPECIAL[key]} fyi` : false;
   }).filter(it => it) as string[];
   return filterRepeated(specials).join(', ');
+}
+
+async function searchHelpdesk(id: string): Promise<string> {
+  const messages = await search(`${id} in:#kids-groups-helpdesk -ранее -предыдущие -customer -%3C%40UQ0EUGQVA%3E`);
+  const links = messages.filter(m => m.username === 'kids groups helpdesk')
+      .filter(m => m.ts !== threadTs)
+      .filter(m => !m.previous)
+      .map(m => `<${m.permalink}|${formatTs(m.ts)}>`);
+  if (0 === links.length) {
+    return '';
+  }
+  return `| ранее: ` + links.join(', ');
+}
+
+async function searchZameny(groupId: string): Promise<string> {
+  const after = moment().subtract(7, 'day').format('YYYY-MM-DD'); //YYYY-MM-DD
+  const query = `${groupId} in:#kgl-zameny after:${after}`;
+  const messagges = await search(query);
+  const links = messagges.filter(m => m.ts !== threadTs)
+      // .filter(m => {
+      //   console.log(m);
+      //   return !m.previous;
+      // })
+      .map(m => `<${m.permalink}|${formatTs(m.ts)}>`);
+  if (0 === links.length) {
+    return '';
+  }
+  return `| замены: ` + links.join(', ');
 }

@@ -8,9 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.buildResponse = void 0;
 const server_1 = require("./server");
+const utils_1 = require("./utils");
+const moment_1 = __importDefault(require("moment"));
 const STUDENT = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
 const TEACHER = '\\s*(п|teacher_id=)\\s*';
 const GROUP = '(\\s*г(рупп.?|р)?\\.?\\s*)';
@@ -40,11 +45,13 @@ const kglLink = 'https://grouplessons-api.skyeng.ru/admin/student/view/';
 const idLink = 'https://id.skyeng.ru/admin/users/';
 const customerLink = 'https://fly.customer.io/env/40281/people/';
 const crm1GroupLink = 'https://crm.skyeng.ru/admin/group/edit?id=';
+let threadTs;
 function buildResponse(payload) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!payload.text) {
             return;
         }
+        threadTs = payload.thread_ts || '';
         payload = cleanPayloadText(payload);
         console.log(payload);
         const ids = parseIds(payload);
@@ -58,9 +65,9 @@ function buildResponse(payload) {
 exports.buildResponse = buildResponse;
 function parseIds(payload) {
     const ids = {
-        students: filterRepeated([...getStudentIds(payload), ...getCommonIds(payload)]),
-        teachers: filterRepeated(getTeacherIds(payload)),
-        groups: filterRepeated(getGroupIds(payload)),
+        students: utils_1.filterRepeated([...getStudentIds(payload), ...getCommonIds(payload)]),
+        teachers: utils_1.filterRepeated(getTeacherIds(payload)),
+        groups: utils_1.filterRepeated(getGroupIds(payload)),
     };
     ids.students = ids.students.filter(id => ids.teachers.indexOf(id) === -1);
     return ids;
@@ -87,7 +94,7 @@ function buildForStudentIds(ids) {
         }
         const promises = ids.map((id) => __awaiter(this, void 0, void 0, function* () {
             return `${id}: <${kglLink}${id}|KGL> | <${idLink}${id}|ID> | <${customerLink}${id}|customer> `
-                + `${yield server_1.buildSearch(id)}\n`;
+                + `${yield searchHelpdesk(id)}\n`;
         }));
         return (yield Promise.all(promises)).join('');
     });
@@ -105,11 +112,9 @@ function buildForGroupIds(ids) {
         if (!ids) {
             return;
         }
-        return ids.map(id => `<${crm1GroupLink}${id}|группа ${id}> \n`).join('');
+        const promises = ids.map((id) => __awaiter(this, void 0, void 0, function* () { return `<${crm1GroupLink}${id}|группа ${id}> ${yield searchZameny(id)}\n`; }));
+        return (yield Promise.all(promises)).join('');
     });
-}
-function filterRepeated(arr) {
-    return [...new Set(arr)];
 }
 function cleanPayloadText(payload) {
     payload.text = payload.text.replace(RE_EXCLUDED, '');
@@ -120,5 +125,35 @@ function buildSpecial(payload) {
         const reKey = new RegExp(key, 'gim');
         return reKey.test(payload.text) ? `${SPECIAL[key]} fyi` : false;
     }).filter(it => it);
-    return filterRepeated(specials).join(', ');
+    return utils_1.filterRepeated(specials).join(', ');
+}
+function searchHelpdesk(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const messages = yield server_1.search(`${id} in:#kids-groups-helpdesk -ранее -предыдущие -customer -%3C%40UQ0EUGQVA%3E`);
+        const links = messages.filter(m => m.username === 'kids groups helpdesk')
+            .filter(m => m.ts !== threadTs)
+            .filter(m => !m.previous)
+            .map(m => `<${m.permalink}|${utils_1.formatTs(m.ts)}>`);
+        if (0 === links.length) {
+            return '';
+        }
+        return `| ранее: ` + links.join(', ');
+    });
+}
+function searchZameny(groupId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const after = moment_1.default().subtract(7, 'day').format('YYYY-MM-DD'); //YYYY-MM-DD
+        const query = `${groupId} in:#kgl-zameny after:${after}`;
+        const messagges = yield server_1.search(query);
+        const links = messagges.filter(m => m.ts !== threadTs)
+            // .filter(m => {
+            //   console.log(m);
+            //   return !m.previous;
+            // })
+            .map(m => `<${m.permalink}|${utils_1.formatTs(m.ts)}>`);
+        if (0 === links.length) {
+            return '';
+        }
+        return `| замены: ` + links.join(', ');
+    });
 }

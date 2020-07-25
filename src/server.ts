@@ -23,7 +23,6 @@ const slackEvent = createEventAdapter(secret);
 const slackBotClient = new WebClient(botToken);
 const slackUserClient = new WebClient(userToken);
 
-let threadTs = '';
 slackEvent.on('message', async (payload: Payload) => {
   if (payload.thread_ts) {
     return;
@@ -35,7 +34,6 @@ slackEvent.on('app_mention', async (payload: Payload) => {
   if (!payload.thread_ts) {
     return;
   }
-  threadTs = payload.thread_ts;
   const text = await buildResponse(payload);
   await postMessage(payload, text);
 });
@@ -45,7 +43,7 @@ slackEvent.on('app_mention', async (payload: Payload) => {
   console.log(`Listening on ${server.address().port}`);
 })();
 
-// TODO унести из сервера
+// TODO унести из сервера?
 async function postMessage(payload: Payload, text?: string) {
   if (!text) {
     return;
@@ -59,44 +57,15 @@ async function postMessage(payload: Payload, text?: string) {
   console.log(result);
 }
 
-// TODO унести из сервера
-export async function buildSearch(id: string) {
-  const query = `${id} in:#kids-groups-helpdesk -ранее -предыдущие -customer -%3C%40UQ0EUGQVA%3E`;
+export async function search(query: string): Promise<SearchResult[]> {
+  // проверка на userToken тут, чтобы юнит-тесты работали
   const result = userToken && await slackUserClient.search.messages({
     query: query,
     sort: 'timestamp',
     count: 60,
   });
-
   if (!result.ok) {
-    return '';
+    return [];
   }
-  const matches: SearchResult[] = result.messages.matches || [];
-
-  if (0 === matches.length) {
-    return '';
-  }
-
-  const links = matches.filter(m => m.username === 'kids groups helpdesk').
-      filter(m => m.ts !== threadTs).
-      filter(m => !m.previous).
-      map(m => `<${m.permalink}|${formatTs(m.ts)}>`);
-  if (0 === links.length) {
-    return '';
-  }
-  return `| ранее: ` + links.join(', ');
-}
-
-const formatter = new Intl.DateTimeFormat('ru', {
-  timeZone: 'Europe/Moscow',
-  hour12: false,
-  weekday: 'short',
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-});
-
-function formatTs(ts: string): string {
-  return formatter.format(new Date(+ts * 1000));
+  return result.messages.matches || [];
 }
