@@ -135,7 +135,7 @@ async function searchHelpdesk(id: string): Promise<string> {
 }
 
 async function searchZameny(groupId: string): Promise<string> {
-  const after = moment().subtract(7, 'day').format('YYYY-MM-DD'); //YYYY-MM-DD
+  const after = moment().subtract(7, 'day').format('YYYY-MM-DD');
   const query = `${groupId} in:#kgl-zameny after:${after}`;
   const messagges = await search(query);
   const links = messagges.filter(m => m.ts !== threadTs)
