@@ -15,52 +15,59 @@ const expect = require('chai').expect;
 console.log = () => { };
 const group = (id) => `<https://crm.skyeng.ru/admin/group/edit?id=${id}|группа ${id}> \n`;
 describe('упоминание группы', () => {
-    it('Г', function () {
+    it('1234', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = '1234';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(group(1234)).equal(result);
         });
     });
-    it('Г. .Г', function () {
+    it('1234. .1235', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = '1234. .1235';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(group(1234) + group(1235)).equal(result);
         });
     });
-    it('Г_ _Г', function () {
+    it('1234_ _1235', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = '1234_ _1235';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(group(1234) + group(1235)).equal(result);
         });
     });
     describe('спец', () => {
-        it('Г имя', function () {
+        it('1832 степа', function () {
+            var _a;
             return __awaiter(this, void 0, void 0, function* () {
-                stubs_1.payload.text = '1832 степа';
+                stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
                 const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
                 expect(group(1832) + '<@UJAGQRJM8> fyi').equal(result);
             });
         });
-        it('Г \\n имя', function () {
+        it('1832 \n abracadabra степа', function () {
+            var _a;
             return __awaiter(this, void 0, void 0, function* () {
-                stubs_1.payload.text = '1832 \n abracadabra степа';
+                stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
                 const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
                 expect(group(1832) + '<@UJAGQRJM8> fyi').equal(result);
             });
         });
-        it('имя Г', function () {
+        it('степа 1832', function () {
+            var _a;
             return __awaiter(this, void 0, void 0, function* () {
-                stubs_1.payload.text = 'степа 1832';
+                stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
                 const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
                 expect(group(1832) + '<@UJAGQRJM8> fyi').equal(result);
             });
         });
-        it('имя \\n Г', function () {
+        it('степа \n abracadabra 1832', function () {
+            var _a;
             return __awaiter(this, void 0, void 0, function* () {
-                stubs_1.payload.text = 'степа \n abracadabra 1832';
+                stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
                 const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
                 expect(group(1832) + '<@UJAGQRJM8> fyi').equal(result);
             });

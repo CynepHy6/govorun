@@ -27,7 +27,8 @@ const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}'
     + '|(\\d+[+@-])+\\d*|[+@-]\\d+'
     + '|pageId=.*?\\d+'
     + '|\\d{10,}'
-    + '|[_]';
+    + '|[_]'
+    + '|\\d+[*]+\\d*';
 const RE_STUDENT = new RegExp(STUDENT + '\\d{5,9}', 'gi');
 const RE_CLEAN_STUDENT = new RegExp(STUDENT, 'gi');
 const RE_TEACHER = new RegExp(TEACHER + '\\d{5,9}', 'gi');
@@ -142,7 +143,7 @@ function searchHelpdesk(id) {
 }
 function searchZameny(groupId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const after = moment_1.default().subtract(7, 'day').format('YYYY-MM-DD'); //YYYY-MM-DD
+        const after = moment_1.default().subtract(7, 'day').format('YYYY-MM-DD');
         const query = `${groupId} in:#kgl-zameny after:${after}`;
         const messagges = yield server_1.search(query);
         const links = messagges.filter(m => m.ts !== threadTs)

@@ -17,95 +17,116 @@ const student = (id) => `${id}: <https://grouplessons-api.skyeng.ru/admin/studen
     ` | <https://id.skyeng.ru/admin/users/${id}|ID> | <https://fly.customer.io/env/40281/people/${id}|customer> \n`;
 const teacher = (id) => `${id}:  <https://id.skyeng.ru/admin/users/${id}|ID> \n`;
 describe('упоминание студента', () => {
-    it('#', function () {
+    it('12345678', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = '12345678';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(12345678)).equal(result);
         });
     });
-    it('У', function () {
+    it('у12345678', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = 'у12345678';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(12345678)).equal(result);
         });
     });
-    it('ЛК', function () {
+    it('лк12345678', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = 'лк12345678';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(12345678)).equal(result);
         });
     });
-    it('У + #', function () {
+    it('у12345678 99999999', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = 'у12345678 99999999';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(12345678) + student(99999999)).equal(result);
         });
     });
-    it('У У + #', function () {
+    it('у12345678 12345678 99999999', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = 'у12345678 12345678 99999999';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(12345678) + student(99999999)).equal(result);
         });
     });
-    it('У У + # + П', function () {
+    it('у 12345678 П 12345678 99999999', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = 'у 12345678 П 12345678 99999999';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(99999999) + teacher(12345678)).equal(result);
         });
     });
-    it('спец # добавляет тег', function () {
+    it('спец 10148852 добавляет тег', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = '10148852';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(10148852) + '<@UJAGQRJM8> fyi').equal(result);
         });
     });
-    it('# + -#', function () {
+    it('12345678 123-123456 123123-123456-123456 123123-123456-', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = '12345678 123-123456 123123-123456-123456 123123-123456-';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(12345678)).equal(result);
         });
     });
-    it('# + .#', function () {
+    it('12345678 p1594304604116600?thread_ts=1594303884.114500', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = '12345678 p1594304604116600?thread_ts=1594303884.114500';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(12345678)).equal(result);
         });
     });
-    it('# + @#', function () {
+    it('12345678 1234566@mail.ru', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = '12345678 1234566@mail.ru';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(12345678)).equal(result);
         });
     });
-    it('# + pageId=#', function () {
+    it('12345678 pageId=777777', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = '12345678 pageId=777777';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(12345678)).equal(result);
         });
     });
-    it('# + ##', function () {
+    it('У 1234567 У 12345678912', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = 'У 1234567 У 12345678912';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(1234567)).equal(result);
         });
     });
-    it('.# #.', function () {
+    it('.1234567 1234568.', function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = '.1234567 1234568.';
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(1234567) + student(1234568)).equal(result);
+        });
+    });
+    it('1234567 123456**1234', function () {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
+            const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
+            expect(student(1234567)).equal(result);
         });
     });
 });

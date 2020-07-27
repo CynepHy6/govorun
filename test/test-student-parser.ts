@@ -8,73 +8,78 @@ const student = (id: number) => `${id}: <https://grouplessons-api.skyeng.ru/admi
 const teacher = (id: number) => `${id}:  <https://id.skyeng.ru/admin/users/${id}|ID> \n`;
 
 describe('упоминание студента', () => {
-  it('#', async function() {
-    payload.text = '12345678';
+  it('12345678', async function() {
+    payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(12345678)).equal(result);
   });
-  it('У', async function() {
-    payload.text = 'у12345678';
+  it('у12345678', async function() {
+    payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(12345678)).equal(result);
   });
-  it('ЛК', async function() {
-    payload.text = 'лк12345678';
+  it('лк12345678', async function() {
+    payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(12345678)).equal(result);
   });
-  it('У + #', async function() {
-    payload.text = 'у12345678 99999999';
+  it('у12345678 99999999', async function() {
+    payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(12345678) + student(99999999)).equal(result);
   });
 
-  it('У У + #', async function() {
-    payload.text = 'у12345678 12345678 99999999';
+  it('у12345678 12345678 99999999', async function() {
+    payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(12345678) + student(99999999)).equal(result);
   });
 
-  it('У У + # + П', async function() {
-    payload.text = 'у 12345678 П 12345678 99999999';
+  it('у 12345678 П 12345678 99999999', async function() {
+    payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(99999999) + teacher(12345678)).equal(result);
   });
 
-  it('спец # добавляет тег', async function() {
-    payload.text = '10148852';
+  it('спец 10148852 добавляет тег', async function() {
+    payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(10148852) + '<@UJAGQRJM8> fyi').equal(result);
   });
 
-  it('# + -#', async function() {
-    payload.text = '12345678 123-123456 123123-123456-123456 123123-123456-';
+  it('12345678 123-123456 123123-123456-123456 123123-123456-', async function() {
+    payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(12345678)).equal(result);
   });
-  it('# + .#', async function() {
-    payload.text = '12345678 p1594304604116600?thread_ts=1594303884.114500';
+  it('12345678 p1594304604116600?thread_ts=1594303884.114500', async function() {
+    payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(12345678)).equal(result);
   });
-  it('# + @#', async function() {
-    payload.text = '12345678 1234566@mail.ru';
+  it('12345678 1234566@mail.ru', async function() {
+    payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(12345678)).equal(result);
   });
-  it('# + pageId=#', async function() {
-    payload.text = '12345678 pageId=777777';
+  it('12345678 pageId=777777', async function() {
+    payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(12345678)).equal(result);
   });
-  it('# + ##', async function() {
-    payload.text = 'У 1234567 У 12345678912';
+  it('У 1234567 У 12345678912', async function() {
+    payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(1234567)).equal(result);
   });
-  it('.# #.', async function() {
-    payload.text = '.1234567 1234568.';
+  it('.1234567 1234568.', async function() {
+    payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(1234567) + student(1234568)).equal(result);
+  });
+  it('1234567 123456**1234', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(student(1234567)).equal(result);
   });
 });
