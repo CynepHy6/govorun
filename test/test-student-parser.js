@@ -137,4 +137,12 @@ describe('студент или учитель', () => {
             expect(student(1234567) + teacher(7654321)).equal(result);
         });
     });
+    it('1234567 record/223-592980/189327171#message_id_189327171', function () {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
+            const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
+            expect(student(1234567)).equal(result);
+        });
+    });
 });

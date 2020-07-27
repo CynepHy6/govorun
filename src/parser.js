@@ -29,7 +29,8 @@ const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}'
     + '|\\d{10,}'
     + '|(=?\\d+)([_])'
     + '|\\d+[*]+\\d*'
-    + '|\\d{4}\\s*[р₽][\\s.]?';
+    + '|\\d{4}\\s*[р₽][\\s.]?'
+    + '|\\/\\d+#';
 const RE_STUDENT = new RegExp(STUDENT + '\\d{5,9}', 'gi');
 const RE_CLEAN_STUDENT = new RegExp(STUDENT, 'gi');
 const RE_TEACHER = new RegExp(TEACHER + '\\d{5,9}', 'gi');

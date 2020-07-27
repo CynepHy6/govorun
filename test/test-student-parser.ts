@@ -87,4 +87,9 @@ describe('студент или учитель', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(1234567) + teacher(7654321)).equal(result);
   });
+  it('1234567 record/223-592980/189327171#message_id_189327171', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(student(1234567)).equal(result);
+  });
 });
