@@ -21,6 +21,11 @@ describe('упоминание группы', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(group(1234) + group(1235)).equal(result);
   });
+  it('1111 1234р 1235 Р 1222 ₽', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(group(1111)).equal(result);
+  });
 
   describe('спец', () => {
     it('1832 степа', async function() {
