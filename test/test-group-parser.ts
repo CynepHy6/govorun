@@ -5,18 +5,13 @@ const expect = require('chai').expect;
 console.log = () => {};
 const group = (id: number) => `<https://crm.skyeng.ru/admin/group/edit?id=${id}|группа ${id}> \n`;
 
-describe('упоминание группы', () => {
+describe('группа', () => {
   it('1234', async function() {
     payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(group(1234)).equal(result);
   });
   it('1234. .1235', async function() {
-    payload.text = this.test?.title || '';
-    const [result] = await Promise.all([buildResponse(payload)]);
-    expect(group(1234) + group(1235)).equal(result);
-  });
-  it('1234_ _1235', async function() {
     payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(group(1234) + group(1235)).equal(result);

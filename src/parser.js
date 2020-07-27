@@ -17,7 +17,7 @@ const server_1 = require("./server");
 const utils_1 = require("./utils");
 const moment_1 = __importDefault(require("moment"));
 const STUDENT = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
-const TEACHER = '\\s*(п|teacher_id=)\\s*';
+const TEACHER = '\\s*(teacher_id=|п)\\s*';
 const GROUP = '(\\s*г(рупп.?|р)?\\.?\\s*)';
 const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}'
     + '|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}'
@@ -27,7 +27,7 @@ const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}'
     + '|(\\d+[+@-])+\\d*|[+@-]\\d+'
     + '|pageId=.*?\\d+'
     + '|\\d{10,}'
-    + '|[_]'
+    + '|(=?\\d+)([_])'
     + '|\\d+[*]+\\d*'
     + '|\\d{4}\\s*[р₽][\\s.]?';
 const RE_STUDENT = new RegExp(STUDENT + '\\d{5,9}', 'gi');

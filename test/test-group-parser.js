@@ -14,7 +14,7 @@ const parser_1 = require("../src/parser");
 const expect = require('chai').expect;
 console.log = () => { };
 const group = (id) => `<https://crm.skyeng.ru/admin/group/edit?id=${id}|группа ${id}> \n`;
-describe('упоминание группы', () => {
+describe('группа', () => {
     it('1234', function () {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
@@ -24,14 +24,6 @@ describe('упоминание группы', () => {
         });
     });
     it('1234. .1235', function () {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
-            const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
-            expect(group(1234) + group(1235)).equal(result);
-        });
-    });
-    it('1234_ _1235', function () {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';

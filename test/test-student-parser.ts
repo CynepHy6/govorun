@@ -7,7 +7,7 @@ const student = (id: number) => `${id}: <https://grouplessons-api.skyeng.ru/admi
     ` | <https://id.skyeng.ru/admin/users/${id}|ID> | <https://fly.customer.io/env/40281/people/${id}|customer> \n`;
 const teacher = (id: number) => `${id}:  <https://id.skyeng.ru/admin/users/${id}|ID> \n`;
 
-describe('упоминание студента', () => {
+describe('студент или учитель', () => {
   it('12345678', async function() {
     payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
@@ -81,5 +81,10 @@ describe('упоминание студента', () => {
     payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(student(1234567)).equal(result);
+  });
+  it('student_id=1234567&teacher_id=7654321', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(student(1234567) + teacher(7654321)).equal(result);
   });
 });

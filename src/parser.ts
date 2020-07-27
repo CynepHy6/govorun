@@ -4,7 +4,7 @@ import {filterRepeated, formatTs} from './utils';
 import moment from 'moment';
 
 const STUDENT = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
-const TEACHER = '\\s*(п|teacher_id=)\\s*';
+const TEACHER = '\\s*(teacher_id=|п)\\s*';
 const GROUP = '(\\s*г(рупп.?|р)?\\.?\\s*)';
 const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}'
     + '|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}'
@@ -14,7 +14,7 @@ const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}'
     + '|(\\d+[+@-])+\\d*|[+@-]\\d+'
     + '|pageId=.*?\\d+'
     + '|\\d{10,}'
-    + '|[_]'
+    + '|(=?\\d+)([_])'
     + '|\\d+[*]+\\d*'
     + '|\\d{4}\\s*[р₽][\\s.]?'
 ;

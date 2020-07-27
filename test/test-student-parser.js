@@ -16,7 +16,7 @@ console.log = () => { };
 const student = (id) => `${id}: <https://grouplessons-api.skyeng.ru/admin/student/view/${id}|KGL>` +
     ` | <https://id.skyeng.ru/admin/users/${id}|ID> | <https://fly.customer.io/env/40281/people/${id}|customer> \n`;
 const teacher = (id) => `${id}:  <https://id.skyeng.ru/admin/users/${id}|ID> \n`;
-describe('упоминание студента', () => {
+describe('студент или учитель', () => {
     it('12345678', function () {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
@@ -127,6 +127,14 @@ describe('упоминание студента', () => {
             stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
             const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
             expect(student(1234567)).equal(result);
+        });
+    });
+    it('student_id=1234567&teacher_id=7654321', function () {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            stubs_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
+            const [result] = yield Promise.all([parser_1.buildResponse(stubs_1.payload)]);
+            expect(student(1234567) + teacher(7654321)).equal(result);
         });
     });
 });
