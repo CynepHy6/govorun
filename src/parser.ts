@@ -7,7 +7,8 @@ const STUDENT = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
 const TEACHER = '\\s*(teacher_id=|п)\\s*';
 const GROUP = '(\\s*г(рупп.?|р)?\\.?\\s*)';
 const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}'
-    + '|\\d{1,2}[.-]\\d{1,2}[.-]\\d{4}'
+    + '|\\d{1,2}[.-\\s]\\d{1,2}[.-\\s]\\d{4}'
+    + '|\\d{1,2}\\s[a-zA-Z-яА-Я]{3,}\\s\\d{4}'
     + '|tickets\\/\\d+'
     + '|details\\/\\d+'
     + '|thread_ts=\\d+[.]\\d+'
@@ -16,7 +17,8 @@ const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}'
     + '|\\d{10,}'
     + '|(=?\\d+)([_])'
     + '|\\d+[*]+\\d*'
-    + '|\\d{4}\\s*[р₽][\\s.]?'
+    + '|\\d{4}\\s*[р][\\s.\\b]'
+    + '|\\d{4}\\s*₽'
     + '|\\/\\d+#'
 ;
 const RE_STUDENT = new RegExp(STUDENT + '\\d{5,9}', 'gi');
