@@ -1,4 +1,4 @@
-import {payload, studentTemplate, teacherTemplate} from './testUtils';
+import {payload, studentTemplate, teacherTemplate} from './utils-test';
 import {buildResponse} from '../src/parser';
 
 const expect = require('chai').expect;

@@ -1,5 +1,5 @@
 import {buildResponse} from '../src/parser';
-import {groupTemplate, payload, specMention} from './testUtils';
+import {groupTemplate, payload, specMention} from './utils-test';
 
 const expect = require('chai').expect;
 console.log = () => {};
