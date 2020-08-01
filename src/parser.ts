@@ -53,7 +53,7 @@ export async function buildResponse(payload: Payload) {
 
   const ids = parseIds(payload);
   return ''
-      + await buildForStudentIds(ids.students)
+      + await buildForStudentIds(ids.students, payload.text)
       + await buildForTeacherIds(ids.teachers)
       + await buildForGroupIds(ids.groups)
       + await buildSpecial(payload);
@@ -88,13 +88,13 @@ function getGroupIds(payload: Payload): string[] {
   return ids.map(id => id.replace(RE_CLEAN_GROUP, ''));
 }
 
-async function buildForStudentIds(ids: string[]) {
+async function buildForStudentIds(ids: string[], text: string) {
   if (!ids) {
     return;
   }
   const promises = ids.map(async id => {
     return `${id}: <${kglLink}${id}|KGL> | <${idLink}${id}|ID> | <${customerLink}${id}|customer> `
-        + `${await searchHelpdesk(id)}\n`;
+        + `${await searchHelpdesk(id, text)}\n`;
   });
   return (await Promise.all(promises)).join('');
 }
@@ -127,11 +127,12 @@ function buildSpecial(payload: Payload): string {
   return filterRepeated(specials).join(', ');
 }
 
-async function searchHelpdesk(id: string): Promise<string> {
+async function searchHelpdesk(id: string, text: string): Promise<string> {
   const messages = await search(`${id} in:#kids-groups-helpdesk -ранее -предыдущие -customer -%3C%40UQ0EUGQVA%3E`);
   const links = messages.filter(m => m.username === 'kids groups helpdesk')
       .filter(m => m.ts !== threadTs)
       .filter(m => !m.previous)
+      .filter(m => m.text !== text)
       .map(m => `<${m.permalink}|${formatTs(m.ts)}>`);
   if (0 === links.length) {
     return '';
@@ -144,10 +145,6 @@ async function searchZameny(groupId: string): Promise<string> {
   const query = `${groupId} in:#kgl-zameny after:${after}`;
   const messagges = await search(query);
   const links = messagges.filter(m => m.ts !== threadTs)
-      // .filter(m => {
-      //   console.log(m);
-      //   return !m.previous;
-      // })
       .map(m => `<${m.permalink}|${formatTs(m.ts)}>`);
   if (0 === links.length) {
     return '';
