@@ -42,22 +42,26 @@ const idLink = 'https://id.skyeng.ru/admin/users/';
 const customerLink = 'https://fly.customer.io/env/40281/people/';
 const crm1GroupLink = 'https://crm.skyeng.ru/admin/group/edit?id=';
 
-let threadTs: string;
+const CHANNEL_KGL_ALERT = 'C016TEL002F'
 
-export async function buildResponse(payload: Payload) {
-  if (!payload.text) {
+let threadTs: string;
+let payload: Payload;
+
+export async function buildResponse(p: Payload) {
+  if (!p.text) {
     return;
   }
-  threadTs = payload.thread_ts || '';
-  payload = cleanPayloadText(payload);
-  console.log(payload);
+  threadTs = p.thread_ts || '';
+  p = cleanPayloadText(p);
+  payload = p;
+  console.log(p);
 
-  const ids = parseIds(payload);
+  const ids = parseIds(p);
   return ''
-      + await buildForStudentIds(ids.students, payload.text)
+      + await buildForStudentIds(ids.students, p.text)
       + await buildForTeacherIds(ids.teachers)
       + await buildForGroupIds(ids.groups)
-      + await buildSpecial(payload);
+      + await buildSpecial(p);
 }
 
 function parseIds(payload: Payload): Ids {
@@ -111,7 +115,13 @@ async function buildForGroupIds(ids: string[]) {
   if (!ids) {
     return;
   }
-  const promises = ids.map(async id => `<${crm1GroupLink}${id}|группа ${id}> ${await searchZameny(id)}\n`);
+  const promises = ids.map(async id => {
+    const zameny = await searchZameny(id);
+    if (!zameny && CHANNEL_KGL_ALERT === payload.channel){
+      return '';
+    }
+    return `<${crm1GroupLink}${id}|группа ${id}> ${zameny}\n`
+  });
   return (await Promise.all(promises)).join('');
 }
 
