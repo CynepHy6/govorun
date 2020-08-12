@@ -104,4 +104,9 @@ describe('студент или учитель', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(studentTemplate(1234567)).equal(result);
   });
+  it('1234567 рекомендовал 76543210', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567) + studentTemplate(76543210)).equal(result);
+  });
 });
