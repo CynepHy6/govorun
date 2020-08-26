@@ -109,4 +109,9 @@ describe('студент или учитель', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(studentTemplate(1234567) + studentTemplate(76543210)).equal(result);
   });
+  it('edit#gid=281841282 1234567', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567)).equal(result);
+  });
 });
