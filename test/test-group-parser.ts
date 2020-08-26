@@ -47,5 +47,10 @@ describe('группа', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(groupTemplate(1234)).equal(result);
   });
+  it('1234 1235.00', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(groupTemplate(1234)).equal(result);
+  });
 });
 
