@@ -260,7 +260,7 @@ define("src/parser", ["require", "exports", "src/server", "src/utils", "moment"]
 define("test/testUtils", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.groupTemplate = exports.teacherTemplate = exports.studentTemplate = exports.specMention = exports.payload = void 0;
+    exports.groupTemplate = exports.teacherTemplate = exports.studentTemplate = exports.MENTION = exports.payload = void 0;
     exports.payload = {
         client_msg_id: '',
         type: '',
@@ -280,7 +280,7 @@ define("test/testUtils", ["require", "exports"], function (require, exports) {
         event_ts: '',
         channel_type: '',
     };
-    exports.specMention = '<@UJAGQRJM8> fyi';
+    exports.MENTION = '<@UJAGQRJM8> fyi';
     exports.studentTemplate = (id) => `${id}: <https://grouplessons-api.skyeng.ru/admin/student/view/${id}|KGL>` +
         ` | <https://id.skyeng.ru/admin/users/${id}|ID> | <https://fly.customer.io/env/40281/people/${id}|customer> \n`;
     exports.teacherTemplate = (id) => `${id}:  <https://id.skyeng.ru/admin/users/${id}|ID> \n`;

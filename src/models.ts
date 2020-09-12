@@ -1,4 +1,5 @@
-export const GROUP_SPECIAL = 2348;
+export const CHANNEL_KGL_ALERT = 'C016TEL002F';
+export const CHANNEL_HELPDESK = 'CHDTA5YE8';
 
 export interface Payload {
   client_msg_id: string,

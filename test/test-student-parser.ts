@@ -1,5 +1,6 @@
-import {payload, studentTemplate, teacherTemplate} from './utils-test';
+import {MENTION_OLEG, payload, studentTemplate, teacherTemplate} from './utils-test';
 import {buildResponse} from '../src/parser';
+import {CHANNEL_HELPDESK} from '../src/models';
 
 const expect = require('chai').expect;
 console.log = () => {};
@@ -111,6 +112,24 @@ describe('студент или учитель', () => {
   });
   it('edit#gid=281841282 1234567', async function() {
     payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567)).equal(result);
+  });
+  it('1234567 Добавить бонусные уроки по реф программе обеим У.', async function() {
+    payload.text = this.test?.title || '';
+    payload.channel = CHANNEL_HELPDESK;
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567) + MENTION_OLEG).equal(result);
+  });
+  it('1234567 Нужно начислить реф. бонусы', async function() {
+    payload.text = this.test?.title || '';
+    payload.channel = CHANNEL_HELPDESK;
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567) + MENTION_OLEG).equal(result);
+  });
+  it('1234567 Отмените пожалуйста начисление по реф программе', async function() {
+    payload.text = this.test?.title || '';
+    payload.channel = CHANNEL_HELPDESK;
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(studentTemplate(1234567)).equal(result);
   });

@@ -17,7 +17,8 @@ export const payload = {
   event_ts: '',
   channel_type: '',
 };
-export const specMention = '<@UJAGQRJM8> fyi';
+export const MENTION = '<@UJAGQRJM8> fyi';
+export const MENTION_OLEG = '<@UKG25KW6P> :pray:';
 
 export const studentTemplate = (id: number): string => `${id}: <https://grouplessons-api.skyeng.ru/admin/student/view/${id}|KGL>` +
     ` | <https://id.skyeng.ru/admin/users/${id}|ID> | <https://fly.customer.io/env/40281/people/${id}|customer> \n`;

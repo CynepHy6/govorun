@@ -1,4 +1,4 @@
-import {Ids, Payload, Special} from './models';
+import {CHANNEL_HELPDESK, CHANNEL_KGL_ALERT, Ids, Payload, Special} from './models';
 import {search} from './server';
 import {filterRepeated, formatTs} from './utils';
 import moment from 'moment';
@@ -31,6 +31,7 @@ const RE_GROUP = new RegExp('\\b\\d{4}\\b', 'giu');
 const RE_CLEAN_GROUP = new RegExp(GROUP, 'gi');
 const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
 const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
+const RE_REFERAL = /((добав|начисли|подарок).*?реф(ерал)?.*?(код|програм|акци|бонус))/gmi;
 
 const SPECIAL: Special = {
   '10148852': '<@UJAGQRJM8>',
@@ -42,8 +43,6 @@ const kglLink = 'https://grouplessons-api.skyeng.ru/admin/student/view/';
 const idLink = 'https://id.skyeng.ru/admin/users/';
 const customerLink = 'https://fly.customer.io/env/40281/people/';
 const crm1GroupLink = 'https://crm.skyeng.ru/admin/group/edit?id=';
-
-const CHANNEL_KGL_ALERT = 'C016TEL002F';
 
 let threadTs: string;
 let payload: Payload;
@@ -62,7 +61,8 @@ export async function buildResponse(p: Payload) {
       + await buildForStudentIds(ids.students, p.text)
       + await buildForTeacherIds(ids.teachers)
       + await buildForGroupIds(ids.groups)
-      + await buildSpecial(p);
+      + await buildSpecial(p)
+      + await buildRefCode(p);
 }
 
 function parseIds(payload: Payload): Ids {
@@ -137,6 +137,17 @@ function buildSpecial(payload: Payload): string {
     return reKey.test(payload.text) ? `${SPECIAL[key]} fyi` : false;
   }).filter(it => it) as string[];
   return filterRepeated(specials).join(', ');
+}
+
+async function buildRefCode(payload: Payload) {
+  if (CHANNEL_HELPDESK !== payload.channel) {
+    return '';
+  }
+  const matches = payload.text.match(RE_REFERAL) || [];
+  if (matches.length === 0) {
+    return '';
+  }
+  return '<@UKG25KW6P> :pray:';
 }
 
 async function searchHelpdesk(id: string, text: string): Promise<string> {
