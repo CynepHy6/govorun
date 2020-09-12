@@ -115,6 +115,14 @@ describe('студент или учитель', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(studentTemplate(1234567)).equal(result);
   });
+  it('1234567 Нужно начислить реф. бонусы', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567)).equal(result);
+  });
+});
+
+describe('CHANNEL_HELPDESK реф бонус', () => {
   it('1234567 Добавить бонусные уроки по реф программе обеим У.', async function() {
     payload.text = this.test?.title || '';
     payload.channel = CHANNEL_HELPDESK;
