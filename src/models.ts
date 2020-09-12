@@ -1,3 +1,5 @@
+export const GROUP_SPECIAL = 2348;
+
 export interface Payload {
   client_msg_id: string,
   type: string,

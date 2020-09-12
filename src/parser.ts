@@ -34,7 +34,7 @@ const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 
 const SPECIAL: Special = {
   '10148852': '<@UJAGQRJM8>',
-  '2262(.|[\\s\\S])*ст.па|ст.па(.|[\\s\\S])*2262': '<@UJAGQRJM8>',
+  '2348(.|[\\s\\S])*ст.па|ст.па(.|[\\s\\S])*2348': '<@UJAGQRJM8>',
 };
 const SPECIAL_KEYS = Object.keys(SPECIAL);
 
@@ -43,7 +43,7 @@ const idLink = 'https://id.skyeng.ru/admin/users/';
 const customerLink = 'https://fly.customer.io/env/40281/people/';
 const crm1GroupLink = 'https://crm.skyeng.ru/admin/group/edit?id=';
 
-const CHANNEL_KGL_ALERT = 'C016TEL002F'
+const CHANNEL_KGL_ALERT = 'C016TEL002F';
 
 let threadTs: string;
 let payload: Payload;
@@ -118,10 +118,10 @@ async function buildForGroupIds(ids: string[]) {
   }
   const promises = ids.map(async id => {
     const zameny = await searchZameny(id);
-    if (!zameny && CHANNEL_KGL_ALERT === payload.channel){
+    if (!zameny && CHANNEL_KGL_ALERT === payload.channel) {
       return '';
     }
-    return `<${crm1GroupLink}${id}|группа ${id}> ${zameny}\n`
+    return `<${crm1GroupLink}${id}|группа ${id}> ${zameny}\n`;
   });
   return (await Promise.all(promises)).join('');
 }

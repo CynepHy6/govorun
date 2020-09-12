@@ -6,25 +6,25 @@ console.log = () => {};
 
 describe('группа', () => {
   describe('спец', () => {
-    it('1832 степа', async function() {
+    it('2348 степа', async function() {
       payload.text = this.test?.title || '';
       const [result] = await Promise.all([buildResponse(payload)]);
-      expect(groupTemplate(1832) + specMention).equal(result);
+      expect(groupTemplate(2348) + specMention).equal(result);
     });
-    it('1832 \n abracadabra степа', async function() {
+    it('2348 \n abracadabra степа', async function() {
       payload.text = this.test?.title || '';
       const [result] = await Promise.all([buildResponse(payload)]);
-      expect(groupTemplate(1832) + specMention).equal(result);
+      expect(groupTemplate(2348) + specMention).equal(result);
     });
-    it('степа 1832', async function() {
+    it('степа 2348', async function() {
       payload.text = this.test?.title || '';
       const [result] = await Promise.all([buildResponse(payload)]);
-      expect(groupTemplate(1832) + specMention).equal(result);
+      expect(groupTemplate(2348) + specMention).equal(result);
     });
-    it('степа \n abracadabra 1832', async function() {
+    it('степа \n abracadabra 2348', async function() {
       payload.text = this.test?.title || '';
       const [result] = await Promise.all([buildResponse(payload)]);
-      expect(groupTemplate(1832) + specMention).equal(result);
+      expect(groupTemplate(2348) + specMention).equal(result);
     });
   });
   it('1234', async function() {

@@ -137,7 +137,7 @@ define("src/parser", ["require", "exports", "src/server", "src/utils", "moment"]
     const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
     const SPECIAL = {
         '10148852': '<@UJAGQRJM8>',
-        '1832(.|[\\s\\S])*ст.па|ст.па(.|[\\s\\S])*1832': '<@UJAGQRJM8>',
+        '2348(.|[\\s\\S])*ст.па|ст.па(.|[\\s\\S])*2348': '<@UJAGQRJM8>',
     };
     const SPECIAL_KEYS = Object.keys(SPECIAL);
     const kglLink = 'https://grouplessons-api.skyeng.ru/admin/student/view/';
@@ -317,36 +317,36 @@ define("test/test-group-parser", ["require", "exports", "src/parser", "test/test
             });
         });
         describe('спец', () => {
-            it('1832 степа', function () {
+            it('2348 степа', function () {
                 var _a;
                 return __awaiter(this, void 0, void 0, function* () {
                     testUtils_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
                     const [result] = yield Promise.all([parser_2.buildResponse(testUtils_1.payload)]);
-                    expect(testUtils_1.groupTemplate(1832) + testUtils_1.specMention).equal(result);
+                    expect(testUtils_1.groupTemplate(2348) + testUtils_1.specMention).equal(result);
                 });
             });
-            it('1832 \n abracadabra степа', function () {
+            it('2348 \n abracadabra степа', function () {
                 var _a;
                 return __awaiter(this, void 0, void 0, function* () {
                     testUtils_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
                     const [result] = yield Promise.all([parser_2.buildResponse(testUtils_1.payload)]);
-                    expect(testUtils_1.groupTemplate(1832) + testUtils_1.specMention).equal(result);
+                    expect(testUtils_1.groupTemplate(2348) + testUtils_1.specMention).equal(result);
                 });
             });
-            it('степа 1832', function () {
+            it('степа 2348', function () {
                 var _a;
                 return __awaiter(this, void 0, void 0, function* () {
                     testUtils_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
                     const [result] = yield Promise.all([parser_2.buildResponse(testUtils_1.payload)]);
-                    expect(testUtils_1.groupTemplate(1832) + testUtils_1.specMention).equal(result);
+                    expect(testUtils_1.groupTemplate(2348) + testUtils_1.specMention).equal(result);
                 });
             });
-            it('степа \n abracadabra 1832', function () {
+            it('степа \n abracadabra 2348', function () {
                 var _a;
                 return __awaiter(this, void 0, void 0, function* () {
                     testUtils_1.payload.text = ((_a = this.test) === null || _a === void 0 ? void 0 : _a.title) || '';
                     const [result] = yield Promise.all([parser_2.buildResponse(testUtils_1.payload)]);
-                    expect(testUtils_1.groupTemplate(1832) + testUtils_1.specMention).equal(result);
+                    expect(testUtils_1.groupTemplate(2348) + testUtils_1.specMention).equal(result);
                 });
             });
         });
