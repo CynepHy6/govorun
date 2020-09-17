@@ -31,7 +31,7 @@ const RE_GROUP = new RegExp('\\b\\d{4}\\b', 'giu');
 const RE_CLEAN_GROUP = new RegExp(GROUP, 'gi');
 const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'gi');
 const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
-const RE_REFERAL = /((добав|начисли|подарок).*?реф(ерал)?.*?(код|програм|акци|бонус))/gmi;
+const RE_REFERAL = /((добав|начисли|подарок|актив|ждут).*?реф(ерал)?)/gmi;
 
 const SPECIAL: Special = {
   '10148852': '<@UJAGQRJM8>',
@@ -57,19 +57,22 @@ export async function buildResponse(p: Payload) {
   console.log(p);
 
   const ids = parseIds(p);
-  return ''
+  let res = ''
       + await buildForStudentIds(ids.students, p.text)
       + await buildForTeacherIds(ids.teachers)
-      + await buildForGroupIds(ids.groups)
-      + await buildSpecial(p)
-      + await buildRefCode(p);
+      + await buildForGroupIds(ids.groups);
+  if (res) {
+    res += await buildSpecial(p)
+        + await buildRefCode(p);
+  }
+  return res;
 }
 
 function parseIds(payload: Payload): Ids {
   const ids = {
-    students: filterRepeated([...getStudentIds(payload), ...getCommonIds(payload)]),
-    teachers: filterRepeated(getTeacherIds(payload)),
-    groups: filterRepeated(getGroupIds(payload)),
+    students: filterRepeated([...getStudentIds(payload), ...getCommonIds(payload)]).sort(sortAsNum),
+    teachers: filterRepeated(getTeacherIds(payload)).sort(sortAsNum),
+    groups: filterRepeated(getGroupIds(payload)).sort(sortAsNum),
   };
   ids.students = ids.students.filter(id => ids.teachers.indexOf(id) === -1);
   return ids;
@@ -174,3 +177,5 @@ async function searchZameny(groupId: string): Promise<string> {
   }
   return `| замены: ` + links.join(', ');
 }
+
+const sortAsNum = (a: any, b: any): number => +a - +b;

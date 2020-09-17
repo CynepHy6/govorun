@@ -123,6 +123,12 @@ describe('студент или учитель', () => {
 });
 
 describe('CHANNEL_HELPDESK реф бонус', () => {
+  it('1234567 Отмените пожалуйста начисление по реф программе', async function() {
+    payload.text = this.test?.title || '';
+    payload.channel = CHANNEL_HELPDESK;
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567)).equal(result);
+  });
   it('1234567 Добавить бонусные уроки по реф программе обеим У.', async function() {
     payload.text = this.test?.title || '';
     payload.channel = CHANNEL_HELPDESK;
@@ -135,10 +141,28 @@ describe('CHANNEL_HELPDESK реф бонус', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(studentTemplate(1234567) + MENTION_OLEG).equal(result);
   });
-  it('1234567 Отмените пожалуйста начисление по реф программе', async function() {
+  it('1234567, начислите пожалуйста рефералку', async function() {
     payload.text = this.test?.title || '';
     payload.channel = CHANNEL_HELPDESK;
     const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(1234567)).equal(result);
+    expect(studentTemplate(1234567) + MENTION_OLEG).equal(result);
+  });
+  it('1234567 просят активировать реферальную программу', async function() {
+    payload.text = this.test?.title || '';
+    payload.channel = CHANNEL_HELPDESK;
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567) + MENTION_OLEG).equal(result);
+  });
+  it('1234567 пригласил У 1234568\n Ждут реф неделю', async function() {
+    payload.text = this.test?.title || '';
+    payload.channel = CHANNEL_HELPDESK;
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567) + studentTemplate(1234568) + MENTION_OLEG).equal(result);
+  });
+  it('Ждут реф неделю', async function() {
+    payload.text = this.test?.title || '';
+    payload.channel = CHANNEL_HELPDESK;
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect('').equal(result);
   });
 });
