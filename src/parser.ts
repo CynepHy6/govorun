@@ -22,6 +22,7 @@ const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}'
     + '|\\d{4}\\s*₽'
     + '|\\/\\d+#'
     + '|\\d+\\.\\d+'
+    + '|\\/env\\/\\d+\\/'
 ;
 const RE_STUDENT = new RegExp(STUDENT + '\\d{5,9}', 'gi');
 const RE_CLEAN_STUDENT = new RegExp(STUDENT, 'gi');

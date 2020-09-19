@@ -115,6 +115,11 @@ describe('студент или учитель', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(studentTemplate(1234567)).equal(result);
   });
+  it('https://fly.customer.io/env/40281/people/1234567', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567)).equal(result);
+  });
 });
 
 describe('CHANNEL_HELPDESK реф бонус', () => {
