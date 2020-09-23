@@ -7,6 +7,7 @@ const STUDENT = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
 const TEACHER = '\\s*(teacher_id=|п)\\s*';
 const GROUP = '(\\s*г(рупп.?|р)?\\.?\\s*)';
 const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}'
+    + '|\\d{3,}\\.\\d{3,}'
     + '|<mailto:.*?>'
     + '|\\d{1,2}[.-\\s]\\d{1,2}[.-\\s]\\d{4}\\b'
     + '|\\d{1,2}\\s[a-zA-Z-яА-Я]{3,}\\s\\d{4}\\b'
