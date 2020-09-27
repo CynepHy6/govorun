@@ -1,5 +1,5 @@
 import {buildResponse} from '../src/parser';
-import {groupTemplate, payload, MENTION} from './utils-test';
+import {groupTemplate, MENTION, payload, studentTemplate} from './utils-test';
 
 const expect = require('chai').expect;
 console.log = () => {};
@@ -51,6 +51,11 @@ describe('группа', () => {
     payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(groupTemplate(1234)).equal(result);
+  });
+  it('У 12345678 группа 1234', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(12345678) + groupTemplate(1234)).equal(result);
   });
 });
 
