@@ -164,6 +164,12 @@ describe('CHANNEL_HELPDESK реф бонус', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(studentTemplate(1234567) + studentTemplate(1234568) + MENTION_OLEG).equal(result);
   });
+  it('1234567 пришел от 12345678. Установите, пожалуйста, реферальную программу', async function() {
+    payload.text = this.test?.title || '';
+    payload.channel = CHANNEL_HELPDESK;
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567) + studentTemplate(12345678) + MENTION_OLEG).equal(result);
+  });
   it('Ждут реф неделю', async function() {
     payload.text = this.test?.title || '';
     payload.channel = CHANNEL_HELPDESK;

@@ -31,7 +31,7 @@ const RE_CLEAN_TEACHER = new RegExp(TEACHER, 'gi');
 const RE_GROUP = new RegExp('\\b\\d{4}\\b', 'g');
 const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'g');
 const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
-const RE_REFERAL = /((добав|начисли|подарок|актив|ждут).*?реф(ерал)?)/gmi;
+const RE_REFERAL = /((установи|добав|начисли|подарок|актив|ждут).*?реф(ерал)?)/gmi;
 
 const SPECIAL: Special = {
   '10148852': '<@UJAGQRJM8>',
