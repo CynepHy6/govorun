@@ -50,11 +50,6 @@ describe('студент или учитель', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(studentTemplate(12345678)).equal(result);
   });
-  it('12345678 p1594304604116600?thread_ts=1594303884.114500', async function() {
-    payload.text = this.test?.title || '';
-    const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(12345678)).equal(result);
-  });
   it('12345678 1234566@mail.ru', async function() {
     payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
@@ -80,16 +75,6 @@ describe('студент или учитель', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(studentTemplate(1234567)).equal(result);
   });
-  it('student_id=1234567&teacher_id=7654321', async function() {
-    payload.text = this.test?.title || '';
-    const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(1234567) + teacherTemplate(7654321)).equal(result);
-  });
-  it('1234567 record/223-592980/189327171#message_id_189327171', async function() {
-    payload.text = this.test?.title || '';
-    const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(1234567)).equal(result);
-  });
   it('1234567 РУ', async function() {
     payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
@@ -111,16 +96,6 @@ describe('студент или учитель', () => {
     expect(studentTemplate(1234567)).equal(result);
   });
   it('1234567 Нужно начислить реф. бонусы', async function() {
-    payload.text = this.test?.title || '';
-    const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(1234567)).equal(result);
-  });
-  it('https://fly.customer.io/env/40281/people/1234567', async function() {
-    payload.text = this.test?.title || '';
-    const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(1234567)).equal(result);
-  });
-  it('https://skyeng.slack.com/archives/CHPJHAXPZ/p1600848092.021800 1234567', async function() {
     payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(studentTemplate(1234567)).equal(result);
@@ -175,5 +150,37 @@ describe('CHANNEL_HELPDESK реф бонус', () => {
     payload.channel = CHANNEL_HELPDESK;
     const [result] = await Promise.all([buildResponse(payload)]);
     expect('').equal(result);
+  });
+});
+describe('студент в ссылке', () => {
+  it('persons/12345678/services/12345679', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(12345678)).equal(result);
+  });
+  it('https://fly.customer.io/env/40281/people/1234567', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567)).equal(result);
+  });
+  it('https://skyeng.slack.com/archives/CHPJHAXPZ/p1600848092.021800 1234567', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567)).equal(result);
+  });
+  it('student_id=1234567&teacher_id=7654321', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567) + teacherTemplate(7654321)).equal(result);
+  });
+  it('1234567 record/223-592980/189327171#message_id_189327171', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(1234567)).equal(result);
+  });
+  it('12345678 p1594304604116600?thread_ts=1594303884.114500', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(studentTemplate(12345678)).equal(result);
   });
 });
