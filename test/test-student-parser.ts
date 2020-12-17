@@ -1,9 +1,10 @@
 import {MENTION_OLEG, payload, studentTemplate, teacherTemplate} from './utils-test';
-import {buildResponse} from '../src/parser';
+import {greetings, buildResponse} from '../src/parser';
 import {CHANNEL_HELPDESK} from '../src/models';
 
 const expect = require('chai').expect;
-console.log = () => {};
+console.log = () => {
+};
 
 describe('студент или учитель', () => {
   it('12345678', async function() {
@@ -42,7 +43,7 @@ describe('студент или учитель', () => {
   it('спец 10148852 добавляет тег', async function() {
     payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(10148852) + '<@UJAGQRJM8> fyi').equal(result);
+    expect(studentTemplate(10148852)).equal(result);
   });
 
   it('12345678 123-123456 123123-123456-123456 123123-123456-', async function() {
@@ -107,54 +108,55 @@ describe('CHANNEL_HELPDESK реф бонус', () => {
     payload.text = this.test?.title || '';
     payload.channel = CHANNEL_HELPDESK;
     const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(1234567)).equal(result);
+    expect(greetings() + studentTemplate(1234567)).equal(result);
   });
   it('1234567 Добавить бонусные уроки по реф программе обеим У.', async function() {
     payload.text = this.test?.title || '';
     payload.channel = CHANNEL_HELPDESK;
     const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(1234567) + MENTION_OLEG).equal(result);
+    expect(greetings() + studentTemplate(1234567) + MENTION_OLEG).equal(result);
   });
   it('1234567 Нужно начислить реф. бонусы', async function() {
     payload.text = this.test?.title || '';
     payload.channel = CHANNEL_HELPDESK;
     const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(1234567) + MENTION_OLEG).equal(result);
+    expect(greetings() + studentTemplate(1234567) + MENTION_OLEG).equal(result);
   });
   it('1234567, начислите пожалуйста рефералку', async function() {
     payload.text = this.test?.title || '';
     payload.channel = CHANNEL_HELPDESK;
     const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(1234567) + MENTION_OLEG).equal(result);
+    expect(greetings() + studentTemplate(1234567) + MENTION_OLEG).equal(result);
   });
   it('1234567 просят активировать реферальную программу', async function() {
     payload.text = this.test?.title || '';
     payload.channel = CHANNEL_HELPDESK;
     const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(1234567) + MENTION_OLEG).equal(result);
+    expect(greetings() + studentTemplate(1234567) + MENTION_OLEG).equal(result);
   });
   it('1234567 пригласил У 1234568\n Ждут реф неделю', async function() {
     payload.text = this.test?.title || '';
     payload.channel = CHANNEL_HELPDESK;
     const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(1234567) + studentTemplate(1234568) + MENTION_OLEG).equal(result);
+    expect(greetings() + studentTemplate(1234567) + studentTemplate(1234568) + MENTION_OLEG).equal(result);
   });
   it('1234567 пришел от 12345678. Установите, пожалуйста, реферальную программу', async function() {
     payload.text = this.test?.title || '';
     payload.channel = CHANNEL_HELPDESK;
     const [result] = await Promise.all([buildResponse(payload)]);
-    expect(studentTemplate(1234567) + studentTemplate(12345678) + MENTION_OLEG).equal(result);
+    expect(greetings() + studentTemplate(1234567) + studentTemplate(12345678) + MENTION_OLEG).equal(result);
   });
   it('Ждут реф неделю', async function() {
     payload.text = this.test?.title || '';
     payload.channel = CHANNEL_HELPDESK;
     const [result] = await Promise.all([buildResponse(payload)]);
-    expect('').equal(result);
+    expect(greetings()).equal(result);
   });
 });
 describe('студент в ссылке', () => {
   it('persons/12345678/services/12345679', async function() {
     payload.text = this.test?.title || '';
+    payload.channel = '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(studentTemplate(12345678)).equal(result);
   });

@@ -1,32 +1,10 @@
 import {buildResponse} from '../src/parser';
-import {groupTemplate, MENTION, payload, studentTemplate} from './utils-test';
+import {groupTemplate, payload, studentTemplate} from './utils-test';
 
 const expect = require('chai').expect;
 console.log = () => {};
 
 describe('группа', () => {
-  describe('спец', () => {
-    it('2348 степа', async function() {
-      payload.text = this.test?.title || '';
-      const [result] = await Promise.all([buildResponse(payload)]);
-      expect(groupTemplate(2348) + MENTION).equal(result);
-    });
-    it('2348 \n abracadabra степа', async function() {
-      payload.text = this.test?.title || '';
-      const [result] = await Promise.all([buildResponse(payload)]);
-      expect(groupTemplate(2348) + MENTION).equal(result);
-    });
-    it('степа 2348', async function() {
-      payload.text = this.test?.title || '';
-      const [result] = await Promise.all([buildResponse(payload)]);
-      expect(groupTemplate(2348) + MENTION).equal(result);
-    });
-    it('степа \n abracadabra 2348', async function() {
-      payload.text = this.test?.title || '';
-      const [result] = await Promise.all([buildResponse(payload)]);
-      expect(groupTemplate(2348) + MENTION).equal(result);
-    });
-  });
   it('1234', async function() {
     payload.text = this.test?.title || '';
     const [result] = await Promise.all([buildResponse(payload)]);

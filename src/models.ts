@@ -21,10 +21,6 @@ export interface Block {
   elements: string[]
 }
 
-export interface Special {
-  [key: string]: string
-}
-
 export interface SearchResult {
   iid: string,
   team?: string,

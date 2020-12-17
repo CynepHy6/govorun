@@ -1,4 +1,4 @@
-import {CHANNEL_HELPDESK, CHANNEL_KGL_ALERT, Ids, Payload, Special} from './models';
+import {CHANNEL_HELPDESK, CHANNEL_KGL_ALERT, Ids, Payload} from './models';
 import {search} from './server';
 import {filterRepeated, formatTs} from './utils';
 import moment from 'moment';
@@ -6,24 +6,24 @@ import moment from 'moment';
 const STUDENT = '\\s*(у|лк|student_id=|people\\/)\\s*\\-?\\.?\\s*';
 const TEACHER = '\\s*(teacher_id=|п)\\s*';
 const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}'
-    + '|\\d{3,}\\.\\d{3,}'
-    + '|<mailto:.*?>'
-    + '|\\d{1,2}[.-\\s]\\d{1,2}[.-\\s]\\d{4}\\b'
-    + '|\\b\\d{1,2}\\s[a-zA-Z-яА-Я]{3,}\\s\\d{4}\\b'
-    + '|tickets\\/\\d+'
-    + '|details\\/\\d+'
-    + '|thread_ts=\\d+[.]\\d+'
-    + '|(\\d+[+@-])+\\d*|[+@-]\\d+'
-    + '|(page|g)Id=.*?\\d+'
-    + '|\\d{10,}'
-    + '|(=?\\d+)([_])'
-    + '|\\d+[*]+\\d*'
-    + '|\\d{4}\\s*[р][\\s.]+'
-    + '|\\d{4}\\s*₽'
-    + '|\\/\\d+#'
-    + '|\\d+\\.\\d+'
-    + '|\\/env\\/\\d+\\/'
-    + '|\\/services\\/\\d+'
+  + '|\\d{3,}\\.\\d{3,}'
+  + '|<mailto:.*?>'
+  + '|\\d{1,2}[.-\\s]\\d{1,2}[.-\\s]\\d{4}\\b'
+  + '|\\b\\d{1,2}\\s[a-zA-Z-яА-Я]{3,}\\s\\d{4}\\b'
+  + '|tickets\\/\\d+'
+  + '|details\\/\\d+'
+  + '|thread_ts=\\d+[.]\\d+'
+  + '|(\\d+[+@-])+\\d*|[+@-]\\d+'
+  + '|(page|g)Id=.*?\\d+'
+  + '|\\d{10,}'
+  + '|(=?\\d+)([_])'
+  + '|\\d+[*]+\\d*'
+  + '|\\d{4}\\s*[р][\\s.]+'
+  + '|\\d{4}\\s*₽'
+  + '|\\/\\d+#'
+  + '|\\d+\\.\\d+'
+  + '|\\/env\\/\\d+\\/'
+  + '|\\/services\\/\\d+'
 ;
 const RE_STUDENT = new RegExp(STUDENT + '\\d{5,9}', 'gi');
 const RE_CLEAN_STUDENT = new RegExp(STUDENT, 'gi');
@@ -34,16 +34,11 @@ const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'g');
 const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
 const RE_REFERAL = /((установи|добав|начисли|подарок|актив|ждут).*?реф(ерал)?)/gmi;
 
-const SPECIAL: Special = {
-  '10148852': '<@UJAGQRJM8>',
-  '2348(.|[\\s\\S])*ст.па|ст.па(.|[\\s\\S])*2348': '<@UJAGQRJM8>',
-};
-const SPECIAL_KEYS = Object.keys(SPECIAL);
-
 const kglLink = 'https://grouplessons-api.skyeng.ru/admin/student/view/';
 const idLink = 'https://id.skyeng.ru/admin/users/';
 const customerLink = 'https://fly.customer.io/env/40281/people/';
 const crm1GroupLink = 'https://crm.skyeng.ru/admin/group/edit?id=';
+const crm2Link = 'https://crm2.skyeng.ru/persons/';
 
 let threadTs: string;
 let payload: Payload;
@@ -58,13 +53,12 @@ export async function buildResponse(p: Payload) {
   console.log(p);
 
   const ids = parseIds(p);
-  let res = ''
-      + await buildForStudentIds(ids.students, p.text)
-      + await buildForTeacherIds(ids.teachers)
-      + await buildForGroupIds(ids.groups);
-  if (res) {
-    res += await buildSpecial(p)
-        + await buildRefCode(p);
+  let res = greetings()
+    + await buildForStudentIds(ids.students, p.text)
+    + await buildForTeacherIds(ids.teachers)
+    + await buildForGroupIds(ids.groups);
+  if (res && res !== greetings()) {
+    res += await buildRefCode(p);
   }
   return res;
 }
@@ -102,8 +96,8 @@ async function buildForStudentIds(ids: string[], text: string) {
     return;
   }
   const promises = ids.map(async id => {
-    return `${id}: <${kglLink}${id}|KGL> | <${idLink}${id}|ID> | <${customerLink}${id}|customer> `
-        + `${await searchHelpdesk(id, text)}\n`;
+    return `${id}: <${idLink}${id}|ID> | <${crm2Link}${id}|CRM2> | <${kglLink}${id}|KGL> | <${customerLink}${id}|customer> `
+      + `${await searchHelpdesk(id, text)}\n`;
   });
   return (await Promise.all(promises)).join('');
 }
@@ -112,7 +106,7 @@ async function buildForTeacherIds(ids: string[]) {
   if (!ids) {
     return;
   }
-  return ids.map(id => `${id}:  <${idLink}${id}|ID> \n`).join('');
+  return ids.map(id => `${id}: <${idLink}${id}|ID> | <${crm2Link}${id}|CRM2> \n`).join('');
 }
 
 async function buildForGroupIds(ids: string[]) {
@@ -134,14 +128,6 @@ function cleanPayloadText(payload: Payload): Payload {
   return payload;
 }
 
-function buildSpecial(payload: Payload): string {
-  const specials = SPECIAL_KEYS.map(key => {
-    const reKey = new RegExp(key, 'gim');
-    return reKey.test(payload.text) ? `${SPECIAL[key]} fyi` : false;
-  }).filter(it => it) as string[];
-  return filterRepeated(specials).join(', ');
-}
-
 async function buildRefCode(payload: Payload) {
   if (CHANNEL_HELPDESK !== payload.channel) {
     return '';
@@ -156,10 +142,10 @@ async function buildRefCode(payload: Payload) {
 async function searchHelpdesk(id: string, text: string): Promise<string> {
   const messages = await search(`${id} in:#kids-groups-helpdesk -ранее -предыдущие -customer -%3C%40UQ0EUGQVA%3E`);
   const links = messages.filter(m => m.username === 'kids groups helpdesk')
-      .filter(m => m.ts !== threadTs)
-      .filter(m => !m.previous)
-      .filter(m => m.text !== text)
-      .map(m => `<${m.permalink}|${formatTs(m.ts)}>`);
+    .filter(m => m.ts !== threadTs)
+    .filter(m => !m.previous)
+    .filter(m => m.text !== text)
+    .map(m => `<${m.permalink}|${formatTs(m.ts)}>`);
   if (0 === links.length) {
     return '';
   }
@@ -171,7 +157,7 @@ async function searchZameny(groupId: string): Promise<string> {
   const query = `${groupId} in:#kgl-zameny after:${after}`;
   const messagges = await search(query);
   const links = messagges.filter(m => m.ts !== threadTs)
-      .map(m => `<${m.permalink}|${formatTs(m.ts)}>`);
+    .map(m => `<${m.permalink}|${formatTs(m.ts)}>`);
   if (0 === links.length) {
     return '';
   }
@@ -179,3 +165,24 @@ async function searchZameny(groupId: string): Promise<string> {
 }
 
 const sortAsNum = (a: any, b: any): number => +a - +b;
+
+export function greetings() {
+  if (CHANNEL_HELPDESK !== payload.channel) {
+    return '';
+  }
+  return `Привет!
+
+Вот как можно решить твою проблему:
+*Коммуникации с пользователем* (звонки, перезвоны, договоренности) - #kgl-cs-questions.
+*Проблемы с оплатой на вводном уроке* - #tech-sup-methodists
+*Компенсация уроков* (лишнее списание, что-то еще) - #kgl-cs-questions
+Если *подбор группы* выдает ошибку - проверь у ученика уровень, возраст и класс.
+Если *нет возможности создать запрос на подбор группы* проверь, есть ли уже задача на подбор.
+Если проблема с задачами *Awake, Исходящей линии, Техподдержки, робозвонками* - #crm2-support
+
+Если твой запрос попадает под одну из категорий выше, закрой его, пожалуйста, или мы это сделаем сами.
+
+Если ничего не подходит, мы ответим в течение 2 часов.
+
+`
+}
