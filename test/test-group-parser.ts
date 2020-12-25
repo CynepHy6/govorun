@@ -2,7 +2,8 @@ import {buildResponse} from '../src/parser';
 import {groupTemplate, payload, studentTemplate} from './utils-test';
 
 const expect = require('chai').expect;
-console.log = () => {};
+console.log = () => {
+};
 
 describe('группа', () => {
   it('1234', async function() {
@@ -36,4 +37,12 @@ describe('группа', () => {
     expect(studentTemplate(12345678) + groupTemplate(1234)).equal(result);
   });
 });
+describe('не группа', () => {
+  it('12345678 12345 руб., 12346руб.', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(result).equal(studentTemplate(12345678));
+  });
+});
+
 
