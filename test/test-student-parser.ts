@@ -185,4 +185,9 @@ describe('студент в ссылке', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(studentTemplate(12345678)).equal(result);
   });
+  it('ru/admin/educationServiceId/view/11111111 ru/persons/12345678/services/11111111', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(result).equal(studentTemplate(12345678));
+  });
 });

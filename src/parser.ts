@@ -25,6 +25,7 @@ const EXCLUDED = '\\d{4}[.-]\\d{1,2}[.-]\\d{1,2}'
   + '|\\d+\\.\\d+'
   + '|\\/env\\/\\d+\\/'
   + '|\\/services\\/\\d+'
+  + '|\\/educationServiceId\\/view\\/\\d+'
 ;
 const RE_STUDENT = new RegExp(STUDENT + '\\d{5,9}', 'gi');
 const RE_CLEAN_STUDENT = new RegExp(STUDENT, 'gi');
