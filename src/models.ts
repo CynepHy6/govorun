@@ -1,5 +1,6 @@
 export const CHANNEL_KGL_ALERT = 'C016TEL002F';
 export const CHANNEL_HELPDESK = 'CHDTA5YE8';
+export const BOT_NAME = '<@UQ0EUGQVA>';
 
 export interface Payload {
   client_msg_id: string,

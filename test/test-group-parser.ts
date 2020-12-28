@@ -1,5 +1,6 @@
 import {buildResponse} from '../src/parser';
 import {groupTemplate, payload, studentTemplate} from './utils-test';
+import {CHANNEL_HELPDESK} from '../src/models';
 
 const expect = require('chai').expect;
 console.log = () => {
@@ -36,10 +37,17 @@ describe('группа', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(result).equal(studentTemplate(12345678) + groupTemplate(1234));
   });
+  it('1234 <@UQ0EUGQVA>', async function() {
+    payload.text = this.test?.title || '';
+    payload.channel = CHANNEL_HELPDESK;
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(result).equal(groupTemplate(1234));
+  });
 });
 describe('не группа', () => {
   it('12345678 12345 руб., 12346руб.', async function() {
     payload.text = this.test?.title || '';
+    payload.channel = '';
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(result).equal(studentTemplate(12345678));
   });

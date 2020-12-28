@@ -1,4 +1,4 @@
-import {CHANNEL_HELPDESK, CHANNEL_KGL_ALERT, Ids, Payload} from './models';
+import {CHANNEL_HELPDESK, CHANNEL_KGL_ALERT, Ids, BOT_NAME, Payload} from './models';
 import {search} from './server';
 import {filterRepeated, formatTs} from './utils';
 import moment from 'moment';
@@ -169,7 +169,7 @@ async function searchZameny(groupId: string): Promise<string> {
 const sortAsNum = (a: any, b: any): number => +a - +b;
 
 export function greetings() {
-  if (CHANNEL_HELPDESK !== payload.channel) {
+  if (CHANNEL_HELPDESK !== payload.channel || payload.text.includes(BOT_NAME)) {
     return '';
   }
   return `Привет!
