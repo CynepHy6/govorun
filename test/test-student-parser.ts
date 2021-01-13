@@ -190,4 +190,9 @@ describe('студент в ссылке', () => {
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(result).equal(studentTemplate(12345678));
   });
+  it('https://devjira.skyeng.ru/issues/?filter=12345 12345678', async function() {
+    payload.text = this.test?.title || '';
+    const [result] = await Promise.all([buildResponse(payload)]);
+    expect(result).equal(studentTemplate(12345678));
+  });
 });
