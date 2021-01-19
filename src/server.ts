@@ -1,4 +1,4 @@
-import {Payload, SearchResult} from './models';
+import {BOT_NAME, BOT_OWNER, EMOJI_NO_ENTRY_SIGN, Payload, Reaction, SearchResult} from './models';
 import {buildResponse} from './parser';
 
 const env = require('dotenv');
@@ -38,8 +38,21 @@ slackEvent.on('app_mention', async (payload: Payload) => {
   await postMessage(payload, text);
 });
 
+slackEvent.on('reaction_added', async (reaction: Reaction) => {
+  if (BOT_OWNER !== reaction.user && BOT_NAME !== reaction.item_user) {
+    return;
+  }
+  if (EMOJI_NO_ENTRY_SIGN === reaction.reaction) {
+    console.log('deleted: ', reaction)
+    await slackBotClient.chat.delete({
+      channel: reaction.item.channel,
+      ts: reaction.item.ts,
+    });
+  }
+});
+
 (async () => {
-  const server = await slackEvent.start(process.env.PORT || 3000);
+  const server = await slackEvent.start(process.env.PORT || 80);
   console.log(`Listening on ${server.address().port}`);
 })();
 

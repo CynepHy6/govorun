@@ -1,6 +1,9 @@
 export const CHANNEL_KGL_ALERT = 'C016TEL002F';
 export const CHANNEL_HELPDESK = 'CHDTA5YE8';
-export const BOT_NAME = '<@UQ0EUGQVA>';
+export const BOT_MENTION = '<@UQ0EUGQVA>';
+export const BOT_NAME = 'UQ0EUGQVA';
+export const BOT_OWNER = 'UJAGQRJM8';
+export const EMOJI_NO_ENTRY_SIGN = 'no_entry_sign';
 
 export interface Payload {
   client_msg_id: string,
@@ -14,6 +17,19 @@ export interface Payload {
   channel: string,
   event_ts: string,
   channel_type: string,
+}
+
+export interface Reaction {
+  type: string,
+  user: string; // ,
+  item: {
+    type: string,
+    channel: string,
+    ts: string
+  },
+  reaction: string,
+  item_user: string,
+  event_ts: string
 }
 
 export interface Block {
