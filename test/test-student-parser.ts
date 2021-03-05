@@ -1,5 +1,5 @@
-import {MENTION_OLEG, payload, studentTemplate, teacherTemplate} from './utils-test';
-import {greetings, buildResponse} from '../src/parser';
+import {payload, studentTemplate, teacherTemplate} from './utils-test';
+import {buildResponse, greetings} from '../src/parser';
 import {CHANNEL_HELPDESK} from '../src/models';
 
 const expect = require('chai').expect;
@@ -109,42 +109,6 @@ describe('CHANNEL_HELPDESK реф бонус', () => {
     payload.channel = CHANNEL_HELPDESK;
     const [result] = await Promise.all([buildResponse(payload)]);
     expect(result).equal(greetings() + studentTemplate(1234567));
-  });
-  it('1234567 Добавить бонусные уроки по реф программе обеим У.', async function() {
-    payload.text = this.test?.title || '';
-    payload.channel = CHANNEL_HELPDESK;
-    const [result] = await Promise.all([buildResponse(payload)]);
-    expect(result).equal(greetings() + studentTemplate(1234567) + MENTION_OLEG);
-  });
-  it('1234567 Нужно начислить реф. бонусы', async function() {
-    payload.text = this.test?.title || '';
-    payload.channel = CHANNEL_HELPDESK;
-    const [result] = await Promise.all([buildResponse(payload)]);
-    expect(result).equal(greetings() + studentTemplate(1234567) + MENTION_OLEG);
-  });
-  it('1234567, начислите пожалуйста рефералку', async function() {
-    payload.text = this.test?.title || '';
-    payload.channel = CHANNEL_HELPDESK;
-    const [result] = await Promise.all([buildResponse(payload)]);
-    expect(result).equal(greetings() + studentTemplate(1234567) + MENTION_OLEG);
-  });
-  it('1234567 просят активировать реферальную программу', async function() {
-    payload.text = this.test?.title || '';
-    payload.channel = CHANNEL_HELPDESK;
-    const [result] = await Promise.all([buildResponse(payload)]);
-    expect(result).equal(greetings() + studentTemplate(1234567) + MENTION_OLEG);
-  });
-  it('1234567 пригласил У 1234568\n Ждут реф неделю', async function() {
-    payload.text = this.test?.title || '';
-    payload.channel = CHANNEL_HELPDESK;
-    const [result] = await Promise.all([buildResponse(payload)]);
-    expect(result).equal(greetings() + studentTemplate(1234567) + studentTemplate(1234568) + MENTION_OLEG);
-  });
-  it('1234567 пришел от 12345678. Установите, пожалуйста, реферальную программу', async function() {
-    payload.text = this.test?.title || '';
-    payload.channel = CHANNEL_HELPDESK;
-    const [result] = await Promise.all([buildResponse(payload)]);
-    expect(result).equal(greetings() + studentTemplate(1234567) + studentTemplate(12345678) + MENTION_OLEG);
   });
   it('Ждут реф неделю', async function() {
     payload.text = this.test?.title || '';

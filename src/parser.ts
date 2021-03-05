@@ -35,7 +35,6 @@ const RE_CLEAN_TEACHER = new RegExp(TEACHER, 'gi');
 const RE_GROUP = new RegExp('\\b\\d{4}\\b', 'g');
 const RE_COMMON = new RegExp('\\b\\d{5,9}\\b', 'g');
 const RE_EXCLUDED = new RegExp(EXCLUDED, 'gi');
-const RE_REFERAL = /((установи|добав|начисли|подарок|актив|ждут).*?реф(ерал)?)/gmi;
 
 const kglLink = 'https://grouplessons-api.skyeng.ru/admin/student/view/';
 const idLink = 'https://id.skyeng.ru/admin/users/';
@@ -56,14 +55,10 @@ export async function buildResponse(p: Payload) {
   console.log(p);
 
   const ids = parseIds(p);
-  let res = greetings()
+  return greetings()
     + await buildForStudentIds(ids.students, p.text)
     + await buildForTeacherIds(ids.teachers)
     + await buildForGroupIds(ids.groups);
-  if (res && res !== greetings()) {
-    res += await buildRefCode(p);
-  }
-  return res;
 }
 
 function parseIds(payload: Payload): Ids {
@@ -129,17 +124,6 @@ async function buildForGroupIds(ids: string[]) {
 function cleanPayloadText(payload: Payload): Payload {
   payload.text = payload.text.replace(RE_EXCLUDED, '');
   return payload;
-}
-
-async function buildRefCode(payload: Payload) {
-  if (CHANNEL_HELPDESK !== payload.channel) {
-    return '';
-  }
-  const matches = payload.text.match(RE_REFERAL) || [];
-  if (matches.length === 0) {
-    return '';
-  }
-  return '<@UKG25KW6P> :pray:';
 }
 
 async function searchHelpdesk(id: string, text: string): Promise<string> {
